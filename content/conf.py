@@ -17,11 +17,11 @@
 
 # -- Project information -----------------------------------------------------
 
-project = 'LESSON NAME'
-copyright = '2020, The contributors'
-author = 'The contributors'
-github_user = 'coderefinery'
-github_repo_name = ''  # auto-detected from dirname if blank
+project = 'GROMACS GPU Performance'
+copyright = "2020, EuroCC National Competence Centre Sweden"
+author = "Mark Abraham"
+github_user = "ENCCS"
+github_repo_name = 'gromacs-gpu-performance'  # auto-detected from dirname if blank
 github_version = 'master'
 conf_py_path = '/content/' # with leading and trailing slash
 
@@ -31,6 +31,7 @@ conf_py_path = '/content/' # with leading and trailing slash
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    "sphinx.ext.autosectionlabel",
     # githubpages just adds a .nojekyll file
     'sphinx.ext.githubpages',
     'sphinx_lesson',
@@ -62,6 +63,9 @@ exclude_patterns = ['README*', '_build', 'Thumbs.db', '.DS_Store',
 # a list of builtin themes.
 #
 html_theme = 'sphinx_rtd_theme'
+html_logo = "img/ENCCS.jpg"
+html_favicon = "img/favicon.ico"
+html_title = project
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
