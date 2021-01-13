@@ -1,0 +1,19 @@
+Setting up the environment
+==========================
+
+To do a local build, some software needs to be installed. I use a
+mixture of conda and pip, because some modules are only available on
+PyPi and some only on bioconda.
+
+conda create gromacs-tutorials
+conda activate gromacs-tutorials
+conda config --set pip_interop_enabled True
+conda install --file conda-requirements.txt
+pip install -r requirements.txt
+
+Building the tutorial locally
+=============================
+
+make dirhtml
+
+Then open _build/dirhtml/index.html in your browser

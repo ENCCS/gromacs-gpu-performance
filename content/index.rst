@@ -15,12 +15,17 @@ Intro
    :widths: auto
    :delim: ;
 
-   20 min ; :doc:`filename`
+   20 min ; :doc:`introduction`
+   30 min ; :doc:`md-algorithm`
 
 
 .. toctree::
+   :hidden:
    :maxdepth: 1
    :caption: The lesson
+
+   introduction
+   md-algorithm
 
 
 .. toctree::
@@ -39,7 +44,7 @@ Who is the course for?
 
 This material is targeted towards researchers who already have
 experience with GROMACS and who would like to learn how to improve
-simulation performance by running on GPUs.
+simulation performance when running on GPUs.
 
 
 
@@ -58,10 +63,21 @@ The lesson material is licensed under `CC-BY-4.0
 Instructors who wish to teach this lesson can refer to the :doc:`guide` for
 practical advice.
 
-See also
---------
+Related material
+----------------
 
+BioExcel webinars on performant simulations with GROMACS
 
+* https://bioexcel.eu/webinar-performance-tuning-and-optimization-of-gromacs/ (based on GROMACS 2016)
+* https://bioexcel.eu/webinar-more-bang-for-your-buck-improved-use-of-gpu-nodes-for-gromacs-2018-2019-09-05/
+* https://bioexcel.eu/webinar-6-best-bang-for-your-buck-optimizing-cluster-and-simulation-setup-for-gromacs-7-september-2016/
+* https://bioexcel.eu/webinar-mdbenchmark-a-tedious-task-made-straightforward-2018-11-23/
+
+Publications with useful information for fast GROMACS simulations
+
+* "Heterogeneous parallelization and acceleration of molecular dynamics simulations in GROMACS" https://doi.org/10.1063/5.0018516
+* "More bang for your buck: Improved use of GPU nodes for GROMACS 2018" https://doi.org/10.1002/jcc.26011
+* "Best bang for your buck: GPU nodes for GROMACS biomolecular simulations" https://doi.org/10.1002/jcc.24030
 
 Credits
 -------
