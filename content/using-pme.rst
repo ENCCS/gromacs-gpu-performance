@@ -72,10 +72,11 @@ optimization for the remaining time.
 
    4. Changing the van der Waals cutoff unbalances the force field,
       because the parameters for different interactions are optimized
-      in context with each other. So in the PME tuning, ``mdrun`` must
-      preserve the cutoff for van der Waals. This means PME tuning to
-      short electrostatic cutoffs is a less effective option, because
-      the pair lists must always be large enough for the van der
+      in context with each other. Even making it *longer* can upset
+      the balance. So in the PME tuning, ``mdrun`` must preserve the
+      cutoff for van der Waals. This means PME tuning to short
+      electrostatic cutoffs is a less effective option, because the
+      pair lists must always be large enough for the van der
       Waals. But typically that possibility was not interesting for
       performance anyway.
 

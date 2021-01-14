@@ -72,7 +72,7 @@ that have one or more GPUs and matching groups of 10 CPU cores.
 
 For example (adapted from
 https://docs.csc.fi/computing/running/example-job-scripts-puhti/#single-gpu)
-to get a single GPU, 10 nearby CPU cores and some memory for 10
+to get a single GPU, 10 nearby CPU cores and some memory for 20
 minutes using the project for this workshop, we could use a job script
 like
 
@@ -80,14 +80,16 @@ like
 
     #!/bin/bash
     #SBATCH --job-name=gromacs
-    #SBATCH --account=project_2003752
+    #SBATCH --account=project_2000745
+    #SBATCH --reservation=gromacs
     #SBATCH --partition=gpu
     #SBATCH --gres=gpu:v100:1
     #SBATCH --ntasks=1
     #SBATCH --cpus-per-task=10
     #SBATCH --mem-per-cpu=8000
-    #SBATCH --time=00:10:00
+    #SBATCH --time=00:20:00
 
+    export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
     module load gcc/9.1.0 hpcx-mpi/2.4.0 gromacs/2020.4-cuda
 
     srun gmx_mpi mdrun
