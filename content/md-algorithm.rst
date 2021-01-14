@@ -39,7 +39,7 @@ calculation, so there is a natural place to focus effort.
 How do GPUs help?
 -----------------
 
-These are electronic devices that are massively parallel, often with
+GPUs are electronic devices that are massively parallel, often with
 thousands of identical compute units ready to all do the same thing.
 This was developed for the challenge of rending complex images onto
 computer screens, but the good work done there has also been built
@@ -64,6 +64,28 @@ few classes, and those happen to be concurrent.
    data used to compute forces based on the positions. Those
    computations don't depend on each other, so they are concurrent and
    may be parallelised.
+
+Moving the most computationally intensive force-computation tasks to
+the GPU will let us exploit parallelism to compute faster.
+
+.. challenge:: 1.1 Quiz: What is the best reason for moving the
+   *most* computationally expensive tasks to the GPU?
+
+   1. CPUs cost more than GPUs
+
+   2. GPUs are good for computationally expensive tasks
+
+   3. They are the simplest to write GPU code for
+
+   4. It makes room for running many different kinds of
+      tasks on the CPU in parallel with the GPU
+
+.. solution::
+
+   4. Given that GROMACS already had a fast CPU implementation, moving
+      the biggest workload to the GPU provides the best
+      parallelism. There are grains of truth in the other answers,
+      however.
 
 Short-ranged non-bonded forces
 ------------------------------
@@ -106,21 +128,6 @@ default values are quite defensive, but it is not recommended to
 change them because any performance benefit will be slight.
 
 TODO exercise: run RF with different buffer sizes
-
-TODO remove or fix challenge
-
-.. challenge:: 1.2 Quiz: if one rank calls a reduce,
-   and another rank calls a broadcast, is it a problem?
-
-   1. Yes, always.
-
-   2. No, never.
-
-   3. Yes when they are using the same communicator
-
-.. solution::
-
-   3. Yes
 
 
 See also
