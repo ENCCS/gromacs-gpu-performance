@@ -1,14 +1,15 @@
-LESSON NAME
-===========
+GROMACS GPU performance
+================================================
 
-Intro
-
-
+In this workshop, we will examine how GROMACS uses GPUs and
+how you as a user can get the best value from that.
 
 .. prereq::
 
-   prerequisites
-
+   Experience running production simulations with GROMACS. General
+   concepts will be introduced with brief descriptions that should be
+   familiar to experienced MD users. Links to the GROMACS
+   documentation will be used frequently.
 
 
 .. csv-table::
@@ -53,8 +54,8 @@ About the course
 
 This lesson material is developed by the `EuroCC National Competence
 Center Sweden (ENCCS) <https://enccs.se/>`_ and taught in ENCCS
-workshops. It is aimed at researchers and developers who already know
-the basics of MPI. Each lesson episode has clearly defined learning
+workshops. It is aimed at researchers and developers who already have
+production experience with GROMACS. Each lesson episode has clearly defined learning
 objectives and includes multiple exercises along with solutions, and
 is therefore also useful for self-learning.
 The lesson material is licensed under `CC-BY-4.0

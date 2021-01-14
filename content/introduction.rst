@@ -1,4 +1,4 @@
-Getting good performance from GROMACS on GPUs
+Introduction
 =============================================
 
 .. questions::
@@ -13,8 +13,8 @@ Getting good performance from GROMACS on GPUs
    - TODO
 
 
-Introduction
-------------
+Why do we need good performance from GROMACS on GPUs
+----------------------------------------------------
 
 Molecular dynamics simulations iteratively solve equations of motion
 to sample a thermodynamic ensemble. Particle positions are used to
@@ -31,7 +31,8 @@ make sure that each of those tiny time steps is computed as
 efficiently as possible. The more observations you make, the more
 likely your scientific conclusions are reliable. That is why so much
 effort has gone into engineering GROMACS to compute those as
-efficiently as possible.
+efficiently as possible. Your compute budget is probably limited and
+you want to get the best value from it.
 
 If you just run `gmx mdrun` then it looks at your simulation and the
 available hardware and does an OK job at guessing what might be best.
