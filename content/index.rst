@@ -18,6 +18,7 @@ how you as a user can get the best value from that.
 
    20 min ; :doc:`introduction`
    30 min ; :doc:`md-algorithm`
+   30 min ; :doc:`using-pme`
 
 
 .. toctree::
@@ -27,6 +28,7 @@ how you as a user can get the best value from that.
 
    introduction
    md-algorithm
+   using-pme
 
 
 .. toctree::

@@ -127,8 +127,81 @@ https://manual.gromacs.org/current/reference-manual/algorithms/molecular-dynamic
 default values are quite defensive, but it is not recommended to
 change them because any performance benefit will be slight.
 
+Further, it turns out that pair lists of single particles run slower
+than pair lists of *clusters* of particles. Small clusters of
+particles are normally either all interacting with each other, or all
+not interacting with each other, just like particles. Moving the data
+for the computation from memory to the compute unit is more efficient
+with small clusters, so GROMACS does it that way. The clusters have
+nothing to do with molecules or bonds, merely that the particles in
+them are close together. On GPUs, it turns out to be most efficient
+to group those clusters into clusters of clusters, also!
+
+.. figure:: img/short-range-cluster-pair-setups.jpg
+   :align: center
+
+   Illustration of clusters of four particles. Left panel: CPU-centric
+   setup. All clusters with solid lines are included in the pair list
+   of cluster i1 (green). Clusters with filled circles have
+   interactions within the buffered cutoff (green dashed line) of at
+   least one particle in i1, while particles in clusters intersected
+   by the buffered cutoff that fall outside of it represent an extra
+   implicit buffer. Right panel: hierarchical super-clusters on
+   GPUs. Clusters i1–i4 (green, magenta, red, and blue) are grouped
+   into a super-cluster. Dashed lines represent buffered cutoffs of
+   each i-cluster. Clusters with any particle in any region will be
+   included in the common pair list. Particles of j-clusters in the
+   joint list are illustrated by discs filled in black to gray; black
+   indicates clusters that interact with all four i-clusters, while
+   lighter gray shading indicates that a cluster only interacts with
+   1–3 i-cluster(s), e.g., jm only with i4. Image used with permission
+   from https://doi.org/10.1063/5.0018516.
+
+
 TODO exercise: run RF with different buffer sizes
 
+Bonded forces
+-------------
+
+Many interesting systems feature particles that have chemical bonds
+that are not modelled well by non-bonded interactions. These require
+evaluating quite different mathematical functions from the non-bonded
+interactions, so they make sense to execute separately. These can also
+be evaluated on either the CPU or the GPU.
+
+.. figure:: img/molecular-dynamics-workflow-short-range-gpu-bonded-cpu.svg
+   :align: center
+
+   Workflow with short-ranged on the GPU and bonded on the CPU. This
+   is the default behavior in GROMACS, and can be selected with ``gmx
+   mdrun -nb gpu -bonded cpu``.
+
+.. figure:: img/molecular-dynamics-workflow-short-range-gpu-bonded-gpu.svg
+   :align: center
+
+   Workflow with both short-ranged and bonded on the GPU. This can be
+   selected with ``gmx mdrun -nb gpu -bonded gpu``.
+
+Now there are two different ways we can run on the GPU. One exploits
+parallelism with the CPU, and one does not.
+
+.. challenge:: 1.1 Quiz: When would it be most likely to benefit
+               from moving bonded interactions to the GPU?
+
+   1. Few bonded interactions and relatively weak CPU
+   2. Few bonded interactions and relatively strong CPU
+   3. Many bonded interactions and relatively weak CPU
+   4. Many bonded interactions and relatively strong CPU
+
+.. solution::
+
+   3. Running two tasks on the GPU adds overhead there, and that
+      offsets any benefit from speeding up the bonded work by running
+      it on the GPU. If the CPU is powerful enough to finish the
+      bonded work before the GPU finishes the short-ranged work, then
+      exploiting the CPU-GPU parallelism is best.
+
+TODO exercise with trying bonded offload
 
 See also
 --------
