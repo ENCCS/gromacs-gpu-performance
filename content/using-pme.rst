@@ -59,7 +59,7 @@ can be forced on with ``gmx mdrun -tunepme``, and forced off with
 the first few thousand steps, and then uses the result of the
 optimization for the remaining time.
 
-.. challenge:: 2.1 Quiz: mdrun also has to compute the van der Waals
+.. challenge:: 3.1 Quiz: mdrun also has to compute the van der Waals
    interactions between particles. Should the cutoff for those be changed
    to match the tuned electrostatic cutoff
 
@@ -89,7 +89,7 @@ MD workflows using PME
    interactions offloaded to the GPU. This can be
    selected with ``gmx mdrun -nb gpu -pme cpu -bonded cpu``.
 
-.. challenge:: 2.2 Quiz: When would it be most likely to benefit
+.. challenge:: 3.2 Quiz: When would it be most likely to benefit
                from moving PME interactions to the GPU?
 
    1. Few bonded interactions and relatively weak CPU

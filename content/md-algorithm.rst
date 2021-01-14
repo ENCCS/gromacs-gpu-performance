@@ -68,7 +68,7 @@ few classes, and those happen to be concurrent.
 Moving the most computationally intensive force-computation tasks to
 the GPU will let us exploit parallelism to compute faster.
 
-.. challenge:: 1.1 Quiz: What is the best reason for moving the
+.. challenge:: 2.1 Quiz: What is the best reason for moving the
    *most* computationally expensive tasks to the GPU?
 
    1. CPUs cost more than GPUs
@@ -185,7 +185,7 @@ be evaluated on either the CPU or the GPU.
 Now there are two different ways we can run on the GPU. One exploits
 parallelism with the CPU, and one does not.
 
-.. challenge:: 1.1 Quiz: When would it be most likely to benefit
+.. challenge:: 2.2 Quiz: When would it be most likely to benefit
                from moving bonded interactions to the GPU?
 
    1. Few bonded interactions and relatively weak CPU
