@@ -34,6 +34,39 @@ simulations, so that you will run efficiently.
 * Choose ``nst*`` parameters to have a large common factor, like 10 or 100
 * Use h-bond constraints and a timestep around 2 fs
 
+Do you need speed or throughput?
+--------------------------------
+
+Sometimes you simply need one trajectory to run as fast as
+possible. But often one's scientific goals are best met by running
+several similar trajectories. Perhaps even the same system
+equilibrated from different starting velocities. If aggregate sampling
+across multiple trajectories is what you need, then multi-simulations
+can be very efficient.
+
+These exploit the fact that the two simulations are themselves
+concurrent. When running a single trajectory, the GPU is idle when the
+update and constraints run on the GPU. However if two trajectories
+run, sharing the same GPU, then they will settle in a pattern running
+mutually "out of phase" with each other. While one trajectory is doing
+the update on the CPU, the other is computing its forces on the
+GPU. Neither trajectory will be as fast as if they had the resources
+to themselves, but the overall sampling rate will be much higher than
+the single trajectory.
+
+It is possible to do this manually with ``gmx mdrun`` if you take care
+to give each trajectory its own CPU cores and share the GPU. However,
+the multi-simulation feature in ``gmx_mpi mdrun -multidir`` will take
+care of these details for you. For example, for four simulations, each
+with one rank, on a single node with two GPUs, consider using
+
+::
+
+   mpirun -np 4 gmx_mpi mdrun -multidir A/ B/ C/ D/
+
+which will share GPU #0 between A and B and GPU #1 between C and D.
+
+
 See also
 --------
 
