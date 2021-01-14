@@ -21,7 +21,7 @@ how you as a user can get the best value from that.
    20 min ; :doc:`puhti`
    30 min ; :doc:`md-algorithm`
    30 min ; :doc:`using-pme`
-
+   15 min ; :doc:`general-considerations`
 
 .. toctree::
    :hidden:
@@ -32,6 +32,7 @@ how you as a user can get the best value from that.
    puhti
    md-algorithm
    using-pme
+   general-considerations
 
 
 .. toctree::
