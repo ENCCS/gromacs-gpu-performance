@@ -53,12 +53,13 @@ expected quality of the electrostatic approximation, and the actual
 implementation can do something equivalent that minimizes the total
 execution time.
 
-In practice, ``mdrun`` does such tuning in the first few thousand
-steps, and then uses the result for the remaining time. It is on by
-default whenever it is likely to be useful, can be forced on with
-``gmx mdrun -tunepme``, and forced off with ``gmx mdrun -notunepme``.
+The PME tuning is on by default whenever it is likely to be useful,
+can be forced on with ``gmx mdrun -tunepme``, and forced off with
+``gmx mdrun -notunepme``.  In practice, ``mdrun`` does such tuning in
+the first few thousand steps, and then uses the result of the
+optimization for the remaining time.
 
-.. challenge:: 1.1 Quiz: ``mdrun`` also has to compute the van der Waals
+.. challenge:: 2.1 Quiz: mdrun also has to compute the van der Waals
    interactions between particles. Should the cutoff for those be changed
    to match the tuned electrostatic cutoff
 
@@ -69,8 +70,14 @@ default whenever it is likely to be useful, can be forced on with
 
 .. solution::
 
-   4. Changing the van der Waals cutoff 
-
+   4. Changing the van der Waals cutoff unbalances the force field,
+      because the parameters for different interactions are optimized
+      in context with each other. So in the PME tuning, ``mdrun`` must
+      preserve the cutoff for van der Waals. This means PME tuning to
+      short electrostatic cutoffs is a less effective option, because
+      the pair lists must always be large enough for the van der
+      Waals. But typically that possibility was not interesting for
+      performance anyway.
 
 MD workflows using PME
 ----------------------
@@ -82,7 +89,7 @@ MD workflows using PME
    interactions offloaded to the GPU. This can be
    selected with ``gmx mdrun -nb gpu -pme cpu -bonded cpu``.
 
-.. challenge:: 1.1 Quiz: When would it be most likely to benefit
+.. challenge:: 2.2 Quiz: When would it be most likely to benefit
                from moving PME interactions to the GPU?
 
    1. Few bonded interactions and relatively weak CPU
@@ -97,6 +104,10 @@ MD workflows using PME
       it on the GPU. If the CPU is powerful enough to finish all its
       work before the GPU finishes the short-ranged work, then
       leaving the PME work on the CPU is best.
+
+The PME task can be moved to the same GPU as the short-ranged
+task. This comes with the same kinds of challenges as moving the
+bonded task to the GPU.
 
 .. figure:: img/molecular-dynamics-workflow-short-range-gpu-pme-gpu-bonded-cpu.svg
    :align: center
