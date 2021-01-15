@@ -191,6 +191,10 @@ reduction, update and constraints phases.
    which is otherwise idle. Run this way using ``gmx mdrun -nb
    gpu -pme gpu -update gpu``
 
+Note that not all combinations of algorithms are supported, but where
+they are supported, the benefit of running the update also on the GPU
+is very useful.
+
 .. challenge:: Explore GPU updates
 
    In the tarball you unpacked earlier is a subdirectory
