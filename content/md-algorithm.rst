@@ -235,9 +235,6 @@ parallelism with the CPU, and one does not.
    log files and see what you can learn. Ask questions about what you
    don't understand while you have experts around to guide you!
 
-See also
---------
-
 .. keypoints::
 
    - Concurrent force calculations can be computed in parallel

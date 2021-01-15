@@ -205,9 +205,6 @@ reduction, update and constraints phases.
    HackMD what you observed.
 
 
-See also
---------
-
 .. keypoints::
 
    - The PME workload can be run on a GPU in a few different ways

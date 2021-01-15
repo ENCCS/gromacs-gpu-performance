@@ -70,6 +70,11 @@ which will share GPU #0 between A and B and GPU #1 between C and D.
 See also
 --------
 
+These papers explore multi-simulations for throughput in detail:
+
+* "More bang for your buck: Improved use of GPU nodes for GROMACS 2018" https://doi.org/10.1002/jcc.26011
+* "Best bang for your buck: GPU nodes for GROMACS biomolecular simulations" https://doi.org/10.1002/jcc.24030
+
 .. keypoints::
 
    - The ``mdrun`` implementation is not fully general, some things run faster than others
