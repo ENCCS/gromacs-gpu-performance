@@ -10,7 +10,6 @@ Introduction
 
    - Know the scientific value of GROMACS performance
    - Know the human value of getting "good enough" performance
-   - TODO
 
 
 Why do we need good performance from GROMACS on GPUs

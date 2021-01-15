@@ -4,12 +4,10 @@ Performant PME simulations
 .. questions::
 
    - What considerations are important when using PME
-   - TODO
 
 .. objectives::
 
    - Know how to assign the PME workload
-   - TODO
 
 Background on the PME algorithm
 -------------------------------
@@ -130,7 +128,59 @@ second part to be run on the CPU instead.
    selected with ``gmx mdrun -nb gpu -pme gpu -pmefft cpu -bonded
    cpu``.
 
-TODO exercise trying PME in different ways
+.. challenge:: Explore performance with PME
+
+   In the tarball you unpacked earlier is a subdirectory
+   ``pme``. Change to that directory.
+
+   In it, you will find a ``topol.tpr`` run input file prepared to do
+   60000 steps of a PME simulation. We'll use it to experiment with
+   task assignment.
+
+   Open the ``script.sh`` file where you will see several lines
+   marked ``**FIXME**``. Remove the ``**FIXME**`` to achieve the
+   goal stated in the comment before that line. You will need to refer
+   to the information above to achieve that. Save the file and exit.
+
+   Submit the script to the SLURM job manager with ``sbatch
+   script.sh``. It will reply something like ``Submitted batch job
+   4565494`` when it succeeded. The job manager will write terminal
+   output to a file named like ``slurm-4565494.out``. It may take a
+   few minutes to start and a few more minutes to run.
+
+   Run ``squeue -u trainingXXX`` where ``XXX`` is replaced by the
+   3-digit number of your account. When your job is running, it will
+   have an "R" in the "STATUS" column.
+   
+   While it is running, you can use ``tail -f slurm*out`` to watch the
+   output. When it says "Done" then the runs are finished. Use Ctrl-C
+   to exit the ``tail`` command that you ran.
+
+   Once the first trajectory completes, exit ``tail`` and use ``less
+   default.log`` to inspect the output. Find the "Mapping of GPU
+   IDs..." Does what you read there agree with what you just learned?
+
+   Then, find where the PME tuning took place. Hint: search for "pme
+   grid". Write in HackMD what cutoff and number of grid points it
+   chose for you for each run. Is it different between each run? Is
+   that different from what other people see? What does that tell you
+   about mdrun performance on this machine?
+   
+   The ``*.log`` files contain the performance (in ns/day) of each run
+   on the last line. Use ``tail *log`` to see the last chunk of each
+   log file. Write a line in HackMD with your name and the performance
+   you got, like ``Jane: Default/NB/NB-and-PME/NB-and-firstPME = 94/46/95/65``
+   Do your numbers look similar to the others? Have a look through the
+   log files and see what you can learn. Ask questions about what you
+   don't understand while you have experts around to guide you!
+
+Running update and constraints on the GPU
+-----------------------------------------
+
+.. figure:: img/molecular-dynamics-workflow-all-on-gpu.svg
+   :align: center
+
+   Possible GROMACS simulation running on a GPU, with short-ranged and
 
 See also
 --------
@@ -138,4 +188,6 @@ See also
 .. keypoints::
 
    - The PME workload can be run on a GPU in a few different ways
-   - The relative strength of CPU and GPU
+   - The relative strength of CPU and GPU and the simulation system
+     determines the most efficient way to assign the tasks. The
+     default is not always best.

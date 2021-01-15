@@ -158,8 +158,6 @@ to group those clusters into clusters of clusters, also!
    from https://doi.org/10.1063/5.0018516.
 
 
-TODO exercise: run RF with different buffer sizes
-
 Bonded forces
 -------------
 
@@ -201,7 +199,41 @@ parallelism with the CPU, and one does not.
       bonded work before the GPU finishes the short-ranged work, then
       exploiting the CPU-GPU parallelism is best.
 
-TODO exercise with trying bonded offload
+.. challenge:: Explore performance with bonded interactions
+
+   In the tarball you unpacked earlier is a subdirectory
+   ``rf``. Change to that directory.
+
+   In it, you will find a ``topol.tpr`` run input file prepared to
+   do 50000 steps of a reaction-field simulation. We'll use it to
+   experiment with task assignment.
+
+   Open the ``script.sh`` file where you will see several lines
+   marked ``**FIXME**``. Remove the ``**FIXME**`` to achieve the
+   goal stated in the comment before that line. You will need to refer
+   to the information above to achieve that. Save the file and exit.
+
+   Submit the script to the SLURM job manager with ``sbatch
+   script.sh``. It will reply something like ``Submitted batch job
+   4565494`` when it succeeded. The job manager will write terminal
+   output to a file named like ``slurm-4565494.out``. It may take a
+   few minutes to start and a few more minutes to run.
+
+   Run ``squeue -u trainingXXX`` where ``XXX`` is replaced by the
+   3-digit number of your account. When your job is running, it will
+   have an "R" in the "STATUS" column.
+   
+   While it is running, you can use ``tail -f slurm*out`` to watch the
+   output. When it says "Done" then the runs are finished. Use Ctrl-C
+   to exit the ``tail`` command that you ran.
+
+   The ``*.log`` files contain the performance (in ns/day) of each run
+   on the last line. Use ``tail *log`` to see the last chunk of each
+   log file. Write a line in HackMD with your name and the performance
+   you got, like ``Jane: Default=513 NB on GPU=508 Both on GPU=496``.
+   Do your numbers look similar to the others? Have a look through the
+   log files and see what you can learn. Ask questions about what you
+   don't understand while you have experts around to guide you!
 
 See also
 --------
