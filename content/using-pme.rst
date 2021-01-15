@@ -134,7 +134,7 @@ second part to be run on the CPU instead.
    ``pme``. Change to that directory.
 
    In it, you will find a ``topol.tpr`` run input file prepared to do
-   60000 steps of a PME simulation. We'll use it to experiment with
+   20000 steps of a PME simulation. We'll use it to experiment with
    task assignment.
 
    Open the ``script.sh`` file where you will see several lines
@@ -177,10 +177,33 @@ second part to be run on the CPU instead.
 Running update and constraints on the GPU
 -----------------------------------------
 
+Recall that earlier we said that the dominant operations are
+arithmetic and data movement. We can eliminate a lot of the data
+movement by moving most computation to the GPU, and also the
+reduction, update and constraints phases.
+
 .. figure:: img/molecular-dynamics-workflow-all-on-gpu.svg
    :align: center
 
-   Possible GROMACS simulation running on a GPU, with short-ranged and
+   Moving also the update and constraints to the GPU. Now there is
+   much less data movement and the whole calculation is much more
+   efficient. Generally the bonded forces should remain on the CPU,
+   which is otherwise idle. Run this way using ``gmx mdrun -nb
+   gpu -pme gpu -update gpu``
+
+.. challenge:: Explore GPU updates
+
+   In the tarball you unpacked earlier is a subdirectory
+   ``pme``. Change to that directory. (You may still be there
+   from the previous exercise.)
+
+   Edit the ``all-on-gpu.sh`` script to make it run NB, PME and the
+   update on the GPU, as well as perhaps the bonded work. Save and
+   exit.
+
+   Run the script and observe the performance as before. Write in
+   HackMD what you observed.
+
 
 See also
 --------
@@ -191,3 +214,5 @@ See also
    - The relative strength of CPU and GPU and the simulation system
      determines the most efficient way to assign the tasks. The
      default is not always best.
+   - When supported, moving the whole MD workload to the GPU provides
+     good improvements.
