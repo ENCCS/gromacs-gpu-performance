@@ -44,7 +44,7 @@ equilibrated from different starting velocities. If aggregate sampling
 across multiple trajectories is what you need, then multi-simulations
 can be very efficient.
 
-These exploit the fact that the two simulations are themselves
+These exploit the fact that the two trajectories are themselves
 concurrent. When running a single trajectory, the GPU is idle when the
 update and constraints run on the GPU. However if two trajectories
 run, sharing the same GPU, then they will settle in a pattern running
@@ -54,10 +54,25 @@ GPU. Neither trajectory will be as fast as if they had the resources
 to themselves, but the overall sampling rate will be much higher than
 the single trajectory.
 
+.. figure:: img/multisim-workflow-sharing-gpu.svg
+   :align: center
+
+   Sharing the GPU between two trajectories. While one trajectory is
+   doing the update phase on the CPU, the other trajectory will use
+   the GPU, which would otherwise lie idle. This maximizes resource
+   utilization. Each trajectory needs its own (dedicated) CPU
+   cores. It might be best to only offload the short-range work to the
+   GPU, do experiment!
+
+This possiblity exists only because there are resources that remain
+idle that can be used in parallel between two trajectories. Thus there
+is no advantage from sharing more than two trajectories per GPU, and
+no such advantage where there is no GPU in use.
+
 It is possible to do this manually with ``gmx mdrun`` if you take care
 to give each trajectory its own CPU cores and share the GPU. However,
 the multi-simulation feature in ``gmx_mpi mdrun -multidir`` will take
-care of these details for you. For example, for four simulations, each
+care of these details for you. For example, for four trajectories, each
 with one rank, on a single node with two GPUs, consider using
 
 ::
