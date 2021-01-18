@@ -201,17 +201,23 @@ parallelism with the CPU, and one does not.
 
 .. challenge:: Explore performance with bonded interactions
 
-   In the tarball you unpacked earlier is a subdirectory
-   ``rf``. Change to that directory.
+   Make a new folder for this exercise, e.g. ``mkdir
+   performance-with-bonded; cd performance-with-bonded``.
+   
+   :download:`Download the run input file
+   <exercises/performance-with-bonded/topol.tpr>` prepared to do 50000
+   steps of a reaction-field simulation. We'll use it to experiment
+   with task assignment.
 
-   In it, you will find a ``topol.tpr`` run input file prepared to
-   do 50000 steps of a reaction-field simulation. We'll use it to
-   experiment with task assignment.
-
-   Open the ``script.sh`` file where you will see several lines
-   marked ``**FIXME**``. Remove the ``**FIXME**`` to achieve the
-   goal stated in the comment before that line. You will need to refer
-   to the information above to achieve that. Save the file and exit.
+   :download:`Download the job submission script
+   <exercises/performance-with-bonded/script.sh>` where you will see
+   several lines marked ``**FIXME**``. Remove the ``**FIXME**`` to
+   achieve the goal stated in the comment before that line. You will
+   need to refer to the information above to achieve that. Save the
+   file and exit. Note that this script was designed to run on the
+   Puhti cluster. If you are not running on Puhti, then you will need
+   to make further changes to this file. Check the documentation for
+   how to submit jobs to your cluster!
 
    Submit the script to the SLURM job manager with ``sbatch
    script.sh``. It will reply something like ``Submitted batch job
@@ -219,22 +225,41 @@ parallelism with the CPU, and one does not.
    output to a file named like ``slurm-4565494.out``. It may take a
    few minutes to start and a few more minutes to run.
 
-   Run ``squeue -u trainingXXX`` where ``XXX`` is replaced by the
-   3-digit number of your account. When your job is running, it will
-   have an "R" in the "STATUS" column.
-   
    While it is running, you can use ``tail -f slurm*out`` to watch the
    output. When it says "Done" then the runs are finished. Use Ctrl-C
    to exit the ``tail`` command that you ran.
 
    The ``*.log`` files contain the performance (in ns/day) of each run
    on the last line. Use ``tail *log`` to see the last chunk of each
-   log file. Write a line in HackMD with your name and the performance
-   you got, like ``Jane: Default=513 NB on GPU=508 Both on GPU=496``.
-   Do your numbers look similar to the others? Have a look through the
-   log files and see what you can learn. Ask questions about what you
-   don't understand while you have experts around to guide you!
+   log file. Examine the performance in ns/day for each trajectory.
+   Have a look through the log files and see what you can learn.
 
+.. solution::
+
+   You can download a :download:`working version
+   <answers/performance-with-bonded/script.sh>` of the batch
+   submission script. Its diff from the original is file
+
+   .. literalinclude:: answers/performance-with-bonded/script.sh
+      :diff: exercises/performance-with-bonded/script.sh
+
+   Sample output it produced is available:
+
+   * :download:`default.log <answers/performance-with-bonded/default.log>`
+   * :download:`manual-nb-bonded.log <answers/performance-with-bonded/manual-nb-bonded.log>`
+   * :download:`manual-nb.log <answers/performance-with-bonded/manual-nb.log>`
+
+   The tails of those log files are
+
+   .. literalinclude:: answers/performance-with-bonded/tail-of-log-files.txt
+      :language: text
+
+   Depending on the underlying variability of the performance of this
+   trajectory on this hardware, we might be able to observe which configuration
+   corresponds to the default, and whether offloading bonded interactions is
+   advantageous, or not. Run the scripts a few time to get a crude impression
+   of that variability!
+   
 .. keypoints::
 
    - Concurrent force calculations can be computed in parallel

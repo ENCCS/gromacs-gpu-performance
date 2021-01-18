@@ -130,17 +130,20 @@ second part to be run on the CPU instead.
 
 .. challenge:: Explore performance with PME
 
-   In the tarball you unpacked earlier is a subdirectory
-   ``pme``. Change to that directory.
+   Make a new folder for this exercise, e.g. ``mkdir
+   using-pme; cd using-pme``.
+   
+   :download:`Download the run input file
+   <exercises/using-pme/topol.tpr>` prepared to do 20000
+   steps of a PME simulation. We'll use it to experiment with task
+   assignment.
 
-   In it, you will find a ``topol.tpr`` run input file prepared to do
-   20000 steps of a PME simulation. We'll use it to experiment with
-   task assignment.
-
-   Open the ``script.sh`` file where you will see several lines
-   marked ``**FIXME**``. Remove the ``**FIXME**`` to achieve the
-   goal stated in the comment before that line. You will need to refer
-   to the information above to achieve that. Save the file and exit.
+   :download:`Download the job submission script
+   <exercises/using-pme/script.sh>` where you will see
+   several lines marked ``**FIXME**``. Remove the ``**FIXME**`` to
+   achieve the goal stated in the comment before that line. You will
+   need to refer to the information above to achieve that. Save the
+   file and exit.
 
    Submit the script to the SLURM job manager with ``sbatch
    script.sh``. It will reply something like ``Submitted batch job
@@ -148,10 +151,6 @@ second part to be run on the CPU instead.
    output to a file named like ``slurm-4565494.out``. It may take a
    few minutes to start and a few more minutes to run.
 
-   Run ``squeue -u trainingXXX`` where ``XXX`` is replaced by the
-   3-digit number of your account. When your job is running, it will
-   have an "R" in the "STATUS" column.
-   
    While it is running, you can use ``tail -f slurm*out`` to watch the
    output. When it says "Done" then the runs are finished. Use Ctrl-C
    to exit the ``tail`` command that you ran.
@@ -161,19 +160,42 @@ second part to be run on the CPU instead.
    IDs..." Does what you read there agree with what you just learned?
 
    Then, find where the PME tuning took place. Hint: search for "pme
-   grid". Write in HackMD what cutoff and number of grid points it
-   chose for you for each run. Is it different between each run? Is
-   that different from what other people see? What does that tell you
-   about mdrun performance on this machine?
+   grid". What minimum value do you expect based on the van der Waals
+   cutoff? What does the tuned value that tell you about the
+   performance of the tasks on the GPU on this machine?
    
    The ``*.log`` files contain the performance (in ns/day) of each run
    on the last line. Use ``tail *log`` to see the last chunk of each
-   log file. Write a line in HackMD with your name and the performance
-   you got, like ``Jane: Default/NB/NB-and-PME/NB-and-firstPME = 94/46/95/65``
-   Do your numbers look similar to the others? Have a look through the
-   log files and see what you can learn. Ask questions about what you
-   don't understand while you have experts around to guide you!
+   log file. Have a look through the log files and see what you can
+   learn. What differs from log files from previous exercises?
 
+.. solution::
+
+   You can download a :download:`working version
+   <answers/using-pme/script.sh>` of the batch
+   submission script. Its diff from the original is file
+
+   .. literalinclude:: answers/using-pme/script.sh
+      :diff: exercises/using-pme/script.sh
+
+   Sample output it produced is available:
+
+   * :download:`default.log <answers/using-pme/default.log>`
+   * :download:`manual-nb.log <answers/using-pme/manual-nb.log>`
+   * :download:`manual-nb-pmeall.log <answers/using-pme/manual-nb-pmeall.log>`
+   * :download:`manual-nb-pmefirst.log <answers/using-pme/manual-nb-pmefirst.log>`
+
+   The tails of those log files are
+
+   .. literalinclude:: answers/using-pme/tail-of-log-files.txt
+      :language: text
+
+   Depending on the underlying variability of the performance of this
+   trajectory on this hardware, we might be able to observe which
+   configuration corresponds to the default, and whether offloading
+   all or part of the PME work is advantageous, or not. Run the
+   scripts a few time to get a crude impression of that variability!
+   
 Running update and constraints on the GPU
 -----------------------------------------
 
@@ -197,17 +219,42 @@ is very useful.
 
 .. challenge:: Explore GPU updates
 
-   In the tarball you unpacked earlier is a subdirectory
-   ``pme``. Change to that directory. (You may still be there
-   from the previous exercise.)
-
-   Edit the ``all-on-gpu.sh`` script to make it run NB, PME and the
+   Using the same folder and ``topol.tpr`` file from the above exercise,
+   :download:`download the job submission script
+   <exercises/using-pme/all-on-gpu.sh>` where you will again see
+   **FIXME** comments. Replace them to make it run NB, PME and the
    update on the GPU, as well as perhaps the bonded work. Save and
    exit.
 
-   Run the script and observe the performance as before. Write in
-   HackMD what you observed.
+   Run the script and observe the performance as before. Is that better
+   or worse than earlier?
 
+.. solution::
+
+   You can download a :download:`working version
+   <answers/using-pme/all-on-gpu.sh>` of the batch
+   submission script. Its diff from the original is file
+
+   .. literalinclude:: answers/using-pme/all-on-gpu.sh
+      :diff: exercises/using-pme/all-on-gpu.sh
+
+   Sample output it produced is available:
+
+   * :download:`default.log <answers/using-pme/default.log>`
+   * :download:`manual-nb.log <answers/using-pme/manual-nb.log>`
+   * :download:`manual-nb-pmeall.log <answers/using-pme/manual-nb-pmeall.log>`
+   * :download:`manual-nb-pmefirst.log <answers/using-pme/manual-nb-pmefirst.log>`
+
+   The tails of those log files are
+
+   .. literalinclude:: answers/using-pme/tail-of-update-log-files.txt
+      :language: text
+
+   Depending on the underlying variability of the performance of this
+   trajectory on this hardware, we might be able to observe whether
+   running also the update on the GPU is advantageous, or not. You
+   should observe that it is a clear improvement on any hardware. Run the
+   scripts a few time to get a crude impression of that variability!
 
 .. keypoints::
 
