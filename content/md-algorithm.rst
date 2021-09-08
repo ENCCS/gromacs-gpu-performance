@@ -49,7 +49,7 @@ Before *parallelism* helps, we need to know that there is
 *concurrency*, ie that there are independent pieces of work that can
 be separated out. This is the same challenge we see in human teams...
 if Mary can't start her work until Dinesh is done his piece, then
-those pieceds of work are not concurrent. Hopefully, Mary has
+those pieces of work are not concurrent. Hopefully, Mary has
 something else to do in the meantime until Dinesh is finished. But
 if not, the team is inefficient. Does MD have concurrency?
 
@@ -257,7 +257,7 @@ parallelism with the CPU, and one does not.
    Depending on the underlying variability of the performance of this
    trajectory on this hardware, we might be able to observe which configuration
    corresponds to the default, and whether offloading bonded interactions is
-   advantageous, or not. Run the scripts a few time to get a crude impression
+   advantageous, or not. Run the scripts a few times to get a crude impression
    of that variability!
    
 .. keypoints::
