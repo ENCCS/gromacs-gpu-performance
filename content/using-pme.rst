@@ -240,10 +240,8 @@ is very useful.
 
    Sample output it produced is available:
 
-   * :download:`default.log <answers/using-pme/default.log>`
-   * :download:`manual-nb.log <answers/using-pme/manual-nb.log>`
-   * :download:`manual-nb-pmeall.log <answers/using-pme/manual-nb-pmeall.log>`
-   * :download:`manual-nb-pmefirst.log <answers/using-pme/manual-nb-pmefirst.log>`
+   * :download:`manual-nb-pme-update.log <answers/using-pme/manual-nb-pme-update.log>`
+   * :download:`manual-nb-pme-bonded-update.log <answers/using-pme/manual-nb-pme-bonded-update.log>`
 
    The tails of those log files are
 

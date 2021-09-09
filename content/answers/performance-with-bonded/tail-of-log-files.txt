@@ -1,34 +1,35 @@
 ==> default.log <==
 
-NOTE: 23 % of the run time was spent in pair search,
+NOTE: 19 % of the run time was spent in pair search,
       you might want to increase nstlist (this has no effect on accuracy)
 
                Core t (s)   Wall t (s)        (%)
-       Time:      167.507       16.751     1000.0
+       Time:      326.182       16.310     1999.9
                  (ns/day)    (hour/ns)
-Performance:      515.800        0.047
-Finished mdrun on rank 0 Fri Jan 15 00:39:51 2021
+Performance:      529.746        0.045
+Finished mdrun on rank 0 Thu Sep  9 09:04:24 2021
 
 
 ==> manual-nb-bonded.log <==
 
-NOTE: 23 % of the run time was spent in pair search,
+NOTE: 18 % of the run time was spent in pair search,
       you might want to increase nstlist (this has no effect on accuracy)
 
                Core t (s)   Wall t (s)        (%)
-       Time:      176.478       17.648     1000.0
+       Time:      340.917       17.047     1999.9
                  (ns/day)    (hour/ns)
-Performance:      489.580        0.049
-Finished mdrun on rank 0 Fri Jan 15 00:40:10 2021
+Performance:      506.852        0.047
+Finished mdrun on rank 0 Thu Sep  9 09:04:44 2021
 
 
 ==> manual-nb.log <==
 
-NOTE: 24 % of the run time was spent in pair search,
+NOTE: 19 % of the run time was spent in pair search,
       you might want to increase nstlist (this has no effect on accuracy)
 
                Core t (s)   Wall t (s)        (%)
-       Time:      164.944       16.495     1000.0
+       Time:      322.644       16.133     1999.9
                  (ns/day)    (hour/ns)
-Performance:      523.814        0.046
-Finished mdrun on rank 0 Fri Jan 15 00:40:28 2021
+Performance:      535.554        0.045
+Finished mdrun on rank 0 Thu Sep  9 09:05:04 2021
+

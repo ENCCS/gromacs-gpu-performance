@@ -1,48 +1,47 @@
 ==> default.log <==
 -----------------------------------------------------------------------------
- Total                                         18.150        381.144 100.0
+ Total                                         19.079        913.607 100.0
 -----------------------------------------------------------------------------
 
                Core t (s)   Wall t (s)        (%)
-       Time:      181.495       18.150     1000.0
+       Time:      381.558       19.079     1999.9
                  (ns/day)    (hour/ns)
-Performance:       95.217        0.252
-Finished mdrun on rank 0 Fri Jan 15 02:20:42 2021
+Performance:       90.582        0.265
+Finished mdrun on rank 0 Thu Sep  9 10:25:42 2021
 
 
 ==> manual-nb.log <==
- PME 3D-FFT             1   10      20002       5.932        124.566  15.8
- PME solve Elec         1   10      10001       0.351          7.367   0.9
+ PME 3D-FFT             1   20      20002       4.644        222.376  11.8
+ PME solve Elec         1   20      10001       0.546         26.143   1.4
 -----------------------------------------------------------------------------
 
                Core t (s)   Wall t (s)        (%)
-       Time:      376.598       37.660     1000.0
+       Time:      790.275       39.514     2000.0
                  (ns/day)    (hour/ns)
-Performance:       45.889        0.523
-Finished mdrun on rank 0 Fri Jan 15 02:22:17 2021
+Performance:       43.735        0.549
+Finished mdrun on rank 0 Thu Sep  9 10:27:23 2021
 
 
 ==> manual-nb-pmeall.log <==
 -----------------------------------------------------------------------------
- Total                                         18.133        380.788 100.0
+ Total                                         18.967        908.261 100.0
 -----------------------------------------------------------------------------
 
                Core t (s)   Wall t (s)        (%)
-       Time:      181.325       18.133     1000.0
+       Time:      379.323       18.967     1999.9
                  (ns/day)    (hour/ns)
-Performance:       95.306        0.252
-Finished mdrun on rank 0 Fri Jan 15 02:23:07 2021
+Performance:       91.115        0.263
+Finished mdrun on rank 0 Thu Sep  9 10:28:18 2021
 
 
 ==> manual-nb-pmefirst.log <==
 -----------------------------------------------------------------------------
- Total                                         26.426        554.954 100.0
+ Total                                         25.932       1241.797 100.0
 -----------------------------------------------------------------------------
 
                Core t (s)   Wall t (s)        (%)
-       Time:      264.262       26.426     1000.0
+       Time:      518.627       25.932     1999.9
                  (ns/day)    (hour/ns)
-Performance:       65.396        0.367
-Finished mdrun on rank 0 Fri Jan 15 02:24:17 2021
-
+Performance:       66.642        0.360
+Finished mdrun on rank 0 Thu Sep  9 10:29:29 2021
 

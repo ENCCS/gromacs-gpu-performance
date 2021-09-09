@@ -1,9 +1,9 @@
-Understanding Puhti GPU nodes
+Understanding Navigator GPU nodes
 =========================================
 
 .. questions::
 
-   - What hardware is available on Puhti's GPU nodes?
+   - What hardware is available on Navigator's GPU nodes?
    - How do we organize computational work to go where it should?
 
 .. objectives::
@@ -12,7 +12,7 @@ Understanding Puhti GPU nodes
    - Understand that managing the locality of data (and the tasks that use them) is critical for performance
 
 Trends in HPC hardware in 2021
---------------------------------
+------------------------------
 
 Most of the compute performance in new clusters and supercomputers
 will be made available in the form of GPUs that accompany the
@@ -29,79 +29,81 @@ handful of GPUs, each with thousands of cores less powerful than the
 CPU cores. The GPUs are able to transfer data to nearby parts of the
 CPU, or to other GPUs.
 
-Puhti GPU nodes
----------------
+Navigator GPU nodes
+-------------------
 
 In this workshop we will focus on the GPU nodes of the supercomputer
-Puhti, located at CSC in Finland (see
-https://docs.csc.fi/computing/overview/). It has 80 nodes with GPUs,
-and there are 4 GPUs on each node. Like nearly all modern hardware, it
+Navigator, located at LAC in Portugal
+(see https://www.uc.pt/lca/ClusterResources/Navigator).
+It has 4 nodes with GPUs, and there are 2 GPUs on each node.
+Like nearly all modern hardware, it
 is built around the notion of *non-uniform memory access* (NUMA). Some
 parts of the memory are closer to a particular core than any other.
 To get best performance, users and programmers need to make sure that
 tasks are allocated to cores and GPUs that prefer the same memory.
 
-.. figure:: lstopo-outputs/puhti-hpc-lstopo.png
+.. figure:: lstopo-outputs/navigator-hpc-only.png
    :align: center
 
-   Slightly simplified output of ``lstopo`` on a Puhti GPU node. The
-   40 cores and 4 gpus are divided evenly across 2 sockets. Compute
-   resources in one socket are closer together than they are to
+   Slightly simplified output of ``lstopo`` on a Navigator GPU node. The
+   20 cores are divided evenly across 2 sockets ("packages") and both
+   GPUs are located on the first socket.
+   Compute resources in one socket are closer together than they are to
    resources in the other socket.
 
 .. challenge:: 1.1 Quiz: Which range of CPU cores would be least
-   effective to use in work related to gpu2?
+   effective to use in work related to ``card2``?
 
    1. Cores 0-9
    2. Cores 10-19
-   3. Cores 0-19
-   4. Cores 20-39
+   3. Cores 20-29
+   4. Cores 30-39
 
 .. solution::
 
-   4. Cores 20-39 in NUMANode 1 would prefer to use different memory
-      than ``gpu2``. Data transfer will be less efficient.
+   3. (or 4.) Cores 20-39 in NUMANode 3 and 4 prefer to use different
+      memory than ``card2``. Data transfer will be less efficient.
 
-Running jobs on Puhti
----------------------
+Running jobs on Navigator
+-------------------------
 
-When requesting GPU nodes on Puhti, a number of CPUs and GPUs are
+When requesting GPU nodes on Navigator, a number of CPUs and GPUs are
 requested. The SLURM job scheduler is capable of quite complex
 assignments, but today we'll keep it simple and focus solely on jobs
-that have one or more GPUs and matching groups of 10 CPU cores.
+that have one or more GPUs and matching groups of 20 CPU cores.
 
 For example (adapted from
-https://docs.csc.fi/computing/running/example-job-scripts-puhti/#single-gpu)
-to get a single GPU, 10 nearby CPU cores and some memory for 20
+https://www.uc.pt/lca/ClusterResources/Navigator/running)
+to get a single GPU, 20 nearby CPU cores and some memory for 10
 minutes using the project for this workshop, we could use a job script
 like
 
 .. code-block:: bash
 
     #!/bin/bash
-    #SBATCH --job-name=gromacs
-    #SBATCH --account=project_2000745
-    #SBATCH --reservation=gromacs
-    #SBATCH --partition=gpu
-    #SBATCH --gres=gpu:v100:1
-    #SBATCH --ntasks=1
-    #SBATCH --cpus-per-task=10
-    #SBATCH --mem-per-cpu=8000
-    #SBATCH --time=00:20:00
+
+    #SBATCH --account training
+    #SBATCH --nodes 1          # One node
+    #SBATCH --ntasks 1         # One task
+    #SBATCH --cpus-per-task=20 # 20 cores per task
+    #SBATCH --time 0-00:20     # Runtime in D-HH:MM
+    #SBATCH --partition gpu    # Use the GPU partition
+    #SBATCH --gres=gpu:v100:1  # One GPU requested
+    #SBATCH --mem=20GB         # Total memory requested
 
     export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
-    module load gcc/9.1.0 hpcx-mpi/2.4.0 gromacs/2020.4-cuda
+    module load GROMACS/2021.3-foss-2020b
 
-    srun gmx_mpi mdrun
+    srun gmx mdrun
 
 If that was in a file ``run-script.sh`` then we can submit it to the
-Puhti batch queue with ``sbatch run-script.sh``. For this workshop,
+Navigator batch queue with ``sbatch run-script.sh``. For this workshop,
 that will start quickly because we have a dedicated reservation.
 
 See also
 --------
 
-* https://docs.csc.fi/computing/running/getting-started/
+* https://www.uc.pt/lca/ClusterResources/Navigator/running
 
 .. keypoints::
 

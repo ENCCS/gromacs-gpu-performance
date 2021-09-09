@@ -1,17 +1,21 @@
-                      :-) GROMACS - gmx mdrun, 2020.4 (-:
+                      :-) GROMACS - gmx mdrun, 2021.3 (-:
 
                             GROMACS is written by:
-     Emile Apol      Rossen Apostolov      Paul Bauer     Herman J.C. Berendsen
-    Par Bjelkmar      Christian Blau   Viacheslav Bolnykh     Kevin Boyd    
- Aldert van Buuren   Rudi van Drunen     Anton Feenstra       Alan Gray     
-  Gerrit Groenhof     Anca Hamuraru    Vincent Hindriksen  M. Eric Irrgang  
-  Aleksei Iupinov   Christoph Junghans     Joe Jordan     Dimitrios Karkoulis
-    Peter Kasson        Jiri Kraus      Carsten Kutzner      Per Larsson    
-  Justin A. Lemkul    Viveca Lindahl    Magnus Lundborg     Erik Marklund   
-    Pascal Merz     Pieter Meulenhoff    Teemu Murtola       Szilard Pall   
-    Sander Pronk      Roland Schulz      Michael Shirts    Alexey Shvetsov  
-   Alfons Sijbers     Peter Tieleman      Jon Vincent      Teemu Virolainen 
- Christian Wennberg    Maarten Wolf      Artem Zhmurov   
+     Andrey Alekseenko              Emile Apol              Rossen Apostolov     
+         Paul Bauer           Herman J.C. Berendsen           Par Bjelkmar       
+       Christian Blau           Viacheslav Bolnykh             Kevin Boyd        
+     Aldert van Buuren           Rudi van Drunen             Anton Feenstra      
+    Gilles Gouaillardet             Alan Gray               Gerrit Groenhof      
+       Anca Hamuraru            Vincent Hindriksen          M. Eric Irrgang      
+      Aleksei Iupinov           Christoph Junghans             Joe Jordan        
+    Dimitrios Karkoulis            Peter Kasson                Jiri Kraus        
+      Carsten Kutzner              Per Larsson              Justin A. Lemkul     
+       Viveca Lindahl            Magnus Lundborg             Erik Marklund       
+        Pascal Merz             Pieter Meulenhoff            Teemu Murtola       
+        Szilard Pall               Sander Pronk              Roland Schulz       
+       Michael Shirts            Alexey Shvetsov             Alfons Sijbers      
+       Peter Tieleman              Jon Vincent              Teemu Virolainen     
+     Christian Wennberg            Maarten Wolf              Artem Zhmurov       
                            and the project leaders:
         Mark Abraham, Berk Hess, Erik Lindahl, and David van der Spoel
 
@@ -26,49 +30,49 @@ under the terms of the GNU Lesser General Public License
 as published by the Free Software Foundation; either version 2.1
 of the License, or (at your option) any later version.
 
-GROMACS:      gmx mdrun, version 2020.4
-Executable:   /appl/spack/install-tree/gcc-9.1.0/gromacs-2020.4-lnokza/bin/gmx_mpi
-Data prefix:  /appl/spack/install-tree/gcc-9.1.0/gromacs-2020.4-lnokza
-Working dir:  /scratch/project_2000745/mark/rf
-Process ID:   84465
+GROMACS:      gmx mdrun, version 2021.3
+Executable:   /veracruz/projects/t/training/gromacs-2021.3/bin/gmx
+Data prefix:  /veracruz/projects/t/training/gromacs-2021.3
+Working dir:  /veracruz/home/m/mabraham/git/gromacs-gpu-performance-master/content/exercises/performance-with-bonded
+Process ID:   105918
 Command line:
-  gmx_mpi mdrun -noconfout -g manual-nb-bonded -nb gpu -bonded gpu
+  gmx mdrun -ntmpi 1 -noconfout -g manual-nb-bonded -nb gpu -bonded gpu
 
-GROMACS version:    2020.4
-Verified release checksum is 79c2857291b034542c26e90512b92fd4b184a1c9d6fa59c55f2e24ccf14e7281
-Precision:          single
+GROMACS version:    2021.3
+Verified release checksum is c5bf577cc74de0e05106b7b6426476abb7f6530be7b4a2c64f637d6a6eca8fcb
+Precision:          mixed
 Memory model:       64 bit
-MPI library:        MPI
+MPI library:        thread_mpi
 OpenMP support:     enabled (GMX_OPENMP_MAX_THREADS = 64)
 GPU support:        CUDA
 SIMD instructions:  AVX_512
-FFT library:        fftw-3.3.8-avx512
+FFT library:        fftw-3.3.9-sse2-avx
 RDTSCP usage:       enabled
 TNG support:        enabled
 Hwloc support:      disabled
 Tracing support:    disabled
-C compiler:         /appl/spack/spack/lib/spack/env/gcc/gcc GNU 9.1.0
-C compiler flags:   -mavx512f -mfma -pthread -fexcess-precision=fast -funroll-all-loops -O3 -DNDEBUG
-C++ compiler:       /appl/spack/spack/lib/spack/env/gcc/g++ GNU 9.1.0
-C++ compiler flags: -mavx512f -mfma -pthread -fexcess-precision=fast -funroll-all-loops -fopenmp -O3 -DNDEBUG
-CUDA compiler:      /appl/spack/install-tree/gcc-9.1.0/cuda-11.1.0-vvfuk2/bin/nvcc nvcc: NVIDIA (R) Cuda compiler driver;Copyright (c) 2005-2020 NVIDIA Corporation;Built on Tue_Sep_15_19:10:02_PDT_2020;Cuda compilation tools, release 11.1, V11.1.74;Build cuda_11.1.TC455_06.29069683_0
-CUDA compiler flags:-gencode;arch=compute_35,code=sm_35;-gencode;arch=compute_37,code=sm_37;-gencode;arch=compute_50,code=sm_50;-gencode;arch=compute_52,code=sm_52;-gencode;arch=compute_60,code=sm_60;-gencode;arch=compute_61,code=sm_61;-gencode;arch=compute_70,code=sm_70;-Wno-deprecated-gpu-targets;-gencode;arch=compute_35,code=compute_35;-gencode;arch=compute_50,code=compute_50;-gencode;arch=compute_52,code=compute_52;-gencode;arch=compute_60,code=compute_60;-gencode;arch=compute_61,code=compute_61;-gencode;arch=compute_70,code=compute_70;-gencode;arch=compute_75,code=compute_75;-gencode;arch=compute_80,code=compute_80;-use_fast_math;;-mavx512f -mfma -pthread -fexcess-precision=fast -funroll-all-loops -fopenmp -O3 -DNDEBUG
+C compiler:         /apps/software/GCCcore/9.3.0/bin/cc GNU 9.3.0
+C compiler flags:   -mavx512f -mfma -Wno-missing-field-initializers -fexcess-precision=fast -funroll-all-loops -pthread -O3 -DNDEBUG
+C++ compiler:       /apps/software/GCCcore/9.3.0/bin/c++ GNU 9.3.0
+C++ compiler flags: -mavx512f -mfma -Wno-missing-field-initializers -fexcess-precision=fast -funroll-all-loops -pthread -fopenmp -O3 -DNDEBUG
+CUDA compiler:      /apps/software/CUDAcore/11.0.2/bin/nvcc nvcc: NVIDIA (R) Cuda compiler driver;Copyright (c) 2005-2020 NVIDIA Corporation;Built on Thu_Jun_11_22:26:38_PDT_2020;Cuda compilation tools, release 11.0, V11.0.194;Build cuda_11.0_bu.TC445_37.28540450_0
+CUDA compiler flags:-std=c++17;-gencode;arch=compute_35,code=sm_35;-gencode;arch=compute_37,code=sm_37;-gencode;arch=compute_50,code=sm_50;-gencode;arch=compute_52,code=sm_52;-gencode;arch=compute_60,code=sm_60;-gencode;arch=compute_61,code=sm_61;-gencode;arch=compute_70,code=sm_70;-gencode;arch=compute_75,code=sm_75;-gencode;arch=compute_80,code=sm_80;-Wno-deprecated-gpu-targets;-gencode;arch=compute_35,code=compute_35;-gencode;arch=compute_53,code=compute_53;-gencode;arch=compute_80,code=compute_80;-use_fast_math;;-mavx512f -mfma -Wno-missing-field-initializers -fexcess-precision=fast -funroll-all-loops -pthread -fopenmp -O3 -DNDEBUG
 CUDA driver:        11.10
-CUDA runtime:       11.10
+CUDA runtime:       11.0
 
 
-Running on 1 node with total 40 cores, 40 logical cores, 1 compatible GPU
-Hardware detected on host r01g04.bullx (the node of MPI rank 0):
+Running on 1 node with total 80 cores, 80 logical cores, 1 compatible GPU
+Hardware detected:
   CPU info:
     Vendor: Intel
-    Brand:  Intel(R) Xeon(R) Gold 6230 CPU @ 2.10GHz
-    Family: 6   Model: 85   Stepping: 7
-    Features: aes apic avx avx2 avx512f avx512cd avx512bw avx512vl clfsh cmov cx8 cx16 f16c fma hle htt intel lahf mmx msr nonstop_tsc pcid pclmuldq pdcm pdpe1gb popcnt pse rdrnd rdtscp rtm sse2 sse3 sse4.1 sse4.2 ssse3 tdt x2apic
+    Brand:  Intel(R) Xeon(R) Gold 6148 CPU @ 2.40GHz
+    Family: 6   Model: 85   Stepping: 4
+    Features: aes apic avx avx2 avx512f avx512cd avx512bw avx512vl avx512secondFMA clfsh cmov cx8 cx16 f16c fma hle htt intel lahf mmx msr nonstop_tsc pcid pclmuldq pdcm pdpe1gb popcnt pse rdrnd rdtscp rtm sse2 sse3 sse4.1 sse4.2 ssse3 tdt x2apic
     Number of AVX-512 FMA units: 2
   Hardware topology: Only logical processor count
   GPU info:
     Number of GPUs detected: 1
-    #0: NVIDIA Tesla V100-SXM2-32GB, compute cap.: 7.0, ECC: yes, stat: compatible
+    #0: NVIDIA Tesla V100-PCIE-16GB, compute cap.: 7.0, ECC: yes, stat: compatible
 
 
 ++++ PLEASE READ AND CITE THE FOLLOWING REFERENCE ++++
@@ -128,11 +132,11 @@ Comp. Phys. Comm. 91 (1995) pp. 43-56
 
 
 ++++ PLEASE CITE THE DOI FOR THIS VERSION OF GROMACS ++++
-https://doi.org/10.5281/zenodo.4054979
+https://doi.org/10.5281/zenodo.5053201
 -------- -------- --- Thank You --- -------- --------
 
 
-The number of OpenMP threads was set by environment variable OMP_NUM_THREADS to 10
+The number of OpenMP threads was set by environment variable OMP_NUM_THREADS to 20
 
 Input Parameters:
    integrator                     = md
@@ -141,6 +145,7 @@ Input Parameters:
    nsteps                         = 50000
    init-step                      = 0
    simulation-part                = 1
+   mts                            = false
    comm-mode                      = Linear
    nstcomm                        = 100
    bd-fric                        = 0
@@ -214,9 +219,6 @@ Input Parameters:
       posres-comB[1]= 0.00000e+00
       posres-comB[2]= 0.00000e+00
    QMMM                           = false
-   QMconstraints                  = 0
-   QMMMscheme                     = 0
-   MMChargeScaleFactor            = 1
 qm-opts:
    ngQM                           = 0
    constraint-algorithm           = Lincs
@@ -310,11 +312,11 @@ Mapping of GPU IDs to the 1 GPU task in the 1 rank on this node:
   PP:0
 PP tasks will do (non-perturbed) short-ranged and most bonded interactions on the GPU
 PP task will update and constrain coordinates on the CPU
-Using 1 MPI process
+Using 1 MPI thread
 
 Non-default thread affinity set, disabling internal thread affinity
 
-Using 10 OpenMP threads 
+Using 20 OpenMP threads 
 
 System total charge: 0.000
 Reaction-Field:
@@ -328,6 +330,7 @@ Tabscale = 500 points/nm
 Generated table with 1060 data points for 1-4 LJ12.
 Tabscale = 500 points/nm
 
+
 Using GPU 8x8 nonbonded short-range kernels
 
 Using a dual 8x8 pair-list setup updated with dynamic, rolling pruning:
@@ -338,7 +341,6 @@ At tolerance 0.005 kJ/mol/ps per atom, equivalent classical 1x1 list would be:
   inner list: updated every  4 steps, buffer 0.034 nm, rlist 0.934 nm
 
 Using Lorentz-Berthelot Lennard-Jones combination rule
-
 Removing pbc first time
 
 Initializing LINear Constraint Solver
@@ -378,29 +380,33 @@ We have the following groups for center of mass motion removal:
 RMS relative constraint deviation after constraining: 2.66e-06
 Initial temperature: 291.407 K
 
-Started mdrun on rank 0 Fri Jan 15 00:39:52 2021
+Started mdrun on rank 0 Thu Sep  9 09:04:27 2021
 
            Step           Time
               0        0.00000
 
    Energies (kJ/mol)
            Bond          Angle    Proper Dih.  Improper Dih.          LJ-14
-    2.84632e+01    4.44083e+03    5.70370e+03    2.49924e+02    2.00482e+03
+    2.84633e+01    4.44083e+03    5.70370e+03    2.49924e+02    2.00482e+03
      Coulomb-14        LJ (SR)   Coulomb (SR)      Potential    Kinetic En.
     1.68045e+04    4.16604e+04   -3.80701e+05   -3.09808e+05    6.00249e+04
    Total Energy  Conserved En.    Temperature Pressure (bar)   Constr. rmsd
-   -2.49783e+05   -2.49783e+05    2.94007e+02    5.62096e+02    3.08304e-06
+   -2.49783e+05   -2.49783e+05    2.94007e+02    5.62201e+02    3.08174e-06
 
            Step           Time
           50000      100.00000
 
    Energies (kJ/mol)
            Bond          Angle    Proper Dih.  Improper Dih.          LJ-14
-    1.66225e+03    4.46194e+03    5.59538e+03    2.70386e+02    1.85576e+03
+    1.71959e+03    4.38235e+03    5.62885e+03    2.46141e+02    1.80369e+03
      Coulomb-14        LJ (SR)   Coulomb (SR)      Potential    Kinetic En.
-    1.61658e+04    4.25595e+04   -3.83011e+05   -3.10440e+05    6.16336e+04
+    1.59967e+04    4.26976e+04   -3.82447e+05   -3.09972e+05    6.17986e+04
    Total Energy  Conserved En.    Temperature Pressure (bar)   Constr. rmsd
-   -2.48806e+05   -2.46828e+05    3.01886e+02   -8.84467e+01    2.92889e-06
+   -2.48173e+05   -2.46834e+05    3.02694e+02   -1.25674e+02    2.95567e-06
+
+
+Energy conservation over simulation part #1 of length 100 ns, time 0 to 100 ns
+  Conserved energy drift: 1.23e-03 kJ/mol/ps per atom
 
 
 	<======  ###############  ==>
@@ -411,21 +417,21 @@ Started mdrun on rank 0 Fri Jan 15 00:39:52 2021
 
    Energies (kJ/mol)
            Bond          Angle    Proper Dih.  Improper Dih.          LJ-14
-    1.60402e+03    4.43982e+03    5.55317e+03    2.60949e+02    1.82803e+03
+    1.60251e+03    4.42067e+03    5.57003e+03    2.59767e+02    1.82483e+03
      Coulomb-14        LJ (SR)   Coulomb (SR)      Potential    Kinetic En.
-    1.60306e+04    4.23853e+04   -3.82937e+05   -3.10836e+05    6.12479e+04
+    1.60354e+04    4.23510e+04   -3.82887e+05   -3.10823e+05    6.12789e+04
    Total Energy  Conserved En.    Temperature Pressure (bar)   Constr. rmsd
-   -2.49588e+05   -2.48283e+05    2.99997e+02   -2.23568e+02    0.00000e+00
+   -2.49544e+05   -2.48295e+05    3.00149e+02   -2.22231e+02    0.00000e+00
 
    Total Virial (kJ/mol)
-    2.20885e+04    1.24199e+01    5.17095e+01
-    1.25499e+01    2.21074e+04   -1.86688e+02
-    5.16026e+01   -1.87032e+02    2.20456e+04
+    2.21044e+04   -5.93133e+01   -4.74753e+01
+   -5.93943e+01    2.20921e+04   -1.05224e+02
+   -4.78063e+01   -1.05369e+02    2.20462e+04
 
    Pressure (bar)
-   -2.23003e+02   -1.26207e+00   -7.48837e+00
-   -1.27953e+00   -2.33580e+02    2.11889e+01
-   -7.47401e+00    2.12351e+01   -2.14120e+02
+   -2.25958e+02    8.22955e+00    4.98932e+00
+    8.24043e+00   -2.25634e+02    1.33851e+01
+    5.03377e+00    1.34044e+01   -2.15102e+02
 
 
 	M E G A - F L O P S   A C C O U N T I N G
@@ -437,49 +443,49 @@ Started mdrun on rank 0 Fri Jan 15 00:39:52 2021
 
  Computing:                               M-Number         M-Flops  % Flops
 -----------------------------------------------------------------------------
- Pair Search distance check            4350.519744       39154.678     0.1
- NxN RF Elec. + LJ [F]              1048191.837824    39831289.837    98.1
- NxN RF Elec. + LJ [V&F]              10608.213120      572843.508     1.4
+ Pair Search distance check            4358.012880       39222.116     0.1
+ NxN RF Elec. + LJ [F]              1047884.984064    39819629.394    98.1
+ NxN RF Elec. + LJ [V&F]              10605.207424      572681.201     1.4
  Shift-X                                 48.104040         288.624     0.0
  Virial                                  12.066585         217.199     0.0
  Stop-CM                                 12.068080         120.681     0.0
  Calc-Ekin                              480.848080       12982.898     0.0
  Lincs                                   49.952997        2997.180     0.0
  Lincs-Mat                              253.815228        1015.261     0.0
- Constraint-V                          1200.348012        9602.784     0.0
+ Constraint-V                          1200.348012       10803.132     0.0
  Constraint-Vir                          11.526507         276.636     0.0
- Settle                                 366.822008      118483.509     0.3
+ Settle                                 366.822008      135724.143     0.3
 -----------------------------------------------------------------------------
- Total                                                40589272.795   100.0
+ Total                                                40595958.465   100.0
 -----------------------------------------------------------------------------
 
 
      R E A L   C Y C L E   A N D   T I M E   A C C O U N T I N G
 
-On 1 MPI rank, each using 10 OpenMP threads
+On 1 MPI rank, each using 20 OpenMP threads
 
  Computing:          Num   Num      Call    Wall time         Giga-Cycles
                      Ranks Threads  Count      (s)         total sum    %
 -----------------------------------------------------------------------------
- Neighbor search        1   10       2001       4.059         85.244  23.0
- Launch GPU ops.        1   10      50001       1.185         24.881   6.7
- Force                  1   10      50001       0.191          4.009   1.1
- Wait Bonded GPU        1   10        501       0.003          0.061   0.0
- Wait GPU NB local      1   10      50001       7.643        160.497  43.3
- NB X/F buffer ops.     1   10      98001       1.259         26.437   7.1
- Update                 1   10      50001       0.852         17.888   4.8
- Constraints            1   10      50003       1.854         38.928  10.5
- Rest                                           0.603         12.664   3.4
+ Neighbor search        1   20       2001       3.007        143.979  17.6
+ Launch GPU ops.        1   20      50001       1.202         57.545   7.0
+ Force                  1   20      50001       0.252         12.065   1.5
+ Wait Bonded GPU        1   20        501       0.002          0.106   0.0
+ Wait GPU NB local      1   20      50001       7.786        372.823  45.7
+ NB X/F buffer ops.     1   20      98001       1.231         58.951   7.2
+ Update                 1   20      50001       0.952         45.572   5.6
+ Constraints            1   20      50003       1.740         83.310  10.2
+ Rest                                           0.876         41.952   5.1
 -----------------------------------------------------------------------------
- Total                                         17.648        370.610 100.0
+ Total                                         17.047        816.303 100.0
 -----------------------------------------------------------------------------
 
-NOTE: 23 % of the run time was spent in pair search,
+NOTE: 18 % of the run time was spent in pair search,
       you might want to increase nstlist (this has no effect on accuracy)
 
                Core t (s)   Wall t (s)        (%)
-       Time:      176.478       17.648     1000.0
+       Time:      340.917       17.047     1999.9
                  (ns/day)    (hour/ns)
-Performance:      489.580        0.049
-Finished mdrun on rank 0 Fri Jan 15 00:40:10 2021
+Performance:      506.852        0.047
+Finished mdrun on rank 0 Thu Sep  9 09:04:44 2021
 

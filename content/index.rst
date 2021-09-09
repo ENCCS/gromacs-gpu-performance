@@ -17,8 +17,7 @@ how you as a user can get the best value from that.
    :delim: ;
 
    20 min ; :doc:`introduction`
-   20 min ; Getting set up on Puhti - see the HackMD document
-   20 min ; :doc:`puhti`
+   20 min ; :doc:`navigator`
    40 min ; :doc:`md-algorithm`
    50 min ; :doc:`using-pme`
    15 min ; :doc:`general-considerations`
@@ -29,7 +28,7 @@ how you as a user can get the best value from that.
    :caption: The lesson
 
    introduction
-   puhti
+   navigator
    md-algorithm
    using-pme
    general-considerations

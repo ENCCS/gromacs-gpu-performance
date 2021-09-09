@@ -85,6 +85,8 @@ which will share GPU #0 between A and B and GPU #1 between C and D.
 See also
 --------
 
+This paper https://arxiv.org/abs/2006.09167 reports on current performance and parallelization used in GROMACS.
+
 These papers explore multi-simulations for throughput in detail:
 
 * "More bang for your buck: Improved use of GPU nodes for GROMACS 2018" https://doi.org/10.1002/jcc.26011
