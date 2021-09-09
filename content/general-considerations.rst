@@ -85,7 +85,8 @@ which will share GPU #0 between A and B and GPU #1 between C and D.
 See also
 --------
 
-This paper https://arxiv.org/abs/2006.09167 reports on current performance and parallelization used in GROMACS.
+This paper "Heterogeneous parallelization and acceleration of molecular dynamics simulations in GROMACS"
+https://doi.org/10.1063/5.0018516 (or https://arxiv.org/abs/2006.09167) has useful information.
 
 These papers explore multi-simulations for throughput in detail:
 
