@@ -61,7 +61,7 @@ tasks are allocated to cores and GPUs that prefer the same memory.
 
 .. solution::
 
-   3. (or 4.) Cores 20-39 in NUMANode 3 and 4 prefer to use different
+   3. (or 4.) Cores 20-39 in NUMANode 2 and 3 prefer to use different
       memory than ``card2``. Data transfer will be less efficient.
 
 Running jobs on Navigator

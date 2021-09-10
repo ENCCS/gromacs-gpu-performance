@@ -41,7 +41,7 @@ How do GPUs help?
 
 GPUs are electronic devices that are massively parallel, often with
 thousands of identical compute units ready to all do the same thing.
-This was developed for the challenge of rending complex images onto
+This was developed for the challenge of rendering complex images onto
 computer screens, but the good work done there has also been built
 upon to do more general computation.
 
