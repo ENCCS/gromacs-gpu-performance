@@ -1,37 +1,31 @@
-#!/bin/bash -l
-#SBATCH --job-name=pme
-#SBATCH --account=training
+#!/bin/bash
+
+#SBATCH --time=00:15:00
 #SBATCH --partition=gpu
-#SBATCH --gres=gpu:v100:1
 #SBATCH --ntasks=1
-#SBATCH --cpus-per-task=20
-#SBATCH --mem=10GB
-#SBATCH --time=00:10:00
+#SBATCH --cpus-per-task=10
+#SBATCH --gres=gpu:v100:1
+#SBATCH --account=project_2003752
+#SBATCH --reservation=gmx3
 
-# Load the GROMACS module and its dependencies
-module load CUDA FFTW OpenBLAS ScaLAPACK Python GCC/9
-source /veracruz/projects/t/training/gromacs-2021.3/bin/GMXRC
-# Ensure that mdrun uses all the CPU cores well
+module purge
+module load gromacs-env/2021-gpu
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
-export SLURM_CPU_BIND=none
 
-# Make sure we don't spend time writing useless output.
-# Also make sure the time spent doing PME tuning doesn't
-# go into the performance statistics, by resetting the
-# counters at step 10000.
-options="-ntmpi 1 -noconfout -resetstep 10000"
+# Make sure we don't spend time writing useless output
+options="-nsteps 20000 -resetstep 19000 -ntomp $SLURM_CPUS_PER_TASK -pin on -pinstride 1"
 
 # Run mdrun with the default task assignment
-srun gmx mdrun $options -g default
+srun gmx mdrun $options -g default.log
 # Run mdrun assigning only the non-bonded interactions to the
 # GPU and PME to the CPU
-srun gmx mdrun $options -g manual-nb           -nb gpu -pme cpu
+srun gmx mdrun $options -g manual-nb.log           -nb gpu -pme cpu
 # Run mdrun assigning the non-bonded interactions and all of
 # the PME task to the GPU
-srun gmx mdrun $options -g manual-nb-pmeall    -nb gpu -pme gpu
+srun gmx mdrun $options -g manual-nb-pmeall.log    -nb gpu -pme gpu
 # Run mdrun assigning the non-bonded interactions and just
 # the first part of the PME task to the GPU
-srun gmx mdrun $options -g manual-nb-pmefirst  -nb gpu -pme gpu -pmefft cpu
+srun gmx mdrun $options -g manual-nb-pmefirst.log  -nb gpu -pme gpu -pmefft cpu
 
 # Let us know we're done
 echo Done

@@ -2,15 +2,17 @@
 
 #SBATCH --time=00:15:00
 #SBATCH --partition=gpu
-#SBATCH --ntasks=1
+#SBATCH --ntasks=2
 #SBATCH --cpus-per-task=10
-#SBATCH --gres=gpu:v100:1
+#SBATCH --gres=gpu:v100:2
 #SBATCH --account=project_2003752
 #SBATCH --reservation=gmx3
 
 module purge
 module load gromacs-env/2021-gpu
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+
+**FIXME**: set GMX_GPU_DD_COMMS and GMX_GPU_PME_PP_COMMS environment variables
 
 # Make sure we don't spend time writing useless output
 options="-nsteps 20000 -resetstep 19000 -ntomp $SLURM_CPUS_PER_TASK -pin on -pinstride 1"

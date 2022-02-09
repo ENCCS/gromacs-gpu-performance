@@ -1,5 +1,5 @@
 Understanding Puhti GPU nodes
-=========================================
+=============================
 
 .. questions::
 
@@ -11,8 +11,8 @@ Understanding Puhti GPU nodes
    - Understand that the time to transfer data between compute units is finite
    - Understand that managing the locality of data (and the tasks that use them) is critical for performance
 
-Trends in HPC hardware in 2021
---------------------------------
+Trends in HPC hardware
+----------------------
 
 Most of the compute performance in new clusters and supercomputers
 will be made available in the form of GPUs that accompany the
@@ -20,8 +20,8 @@ CPUs. Many applications, including GROMACS, have been ported to run on
 GPUs. The dominant GPU vendor in HPC is Nvidia, and their CUDA
 programming framework is close to ubiquitous in HPC applications like
 GROMACS. Recently, AMD and Intel have both won major contracts around
-the world to deliver GPU-enabled machines, so the future will be
-interesting.
+the world to deliver GPU-enabled machines (e.g LUMI supercomputer at CSC,
+https://www.lumi-supercomputer.eu/). So the future will be interesting. 
 
 All such machines have the same general characteristics. There are
 many CPU cores, perhaps separated into a few sockets. There are a
@@ -78,21 +78,22 @@ like
 
 .. code-block:: bash
 
-    #!/bin/bash
-    #SBATCH --job-name=gromacs
-    #SBATCH --account=project_2000745
-    #SBATCH --reservation=gromacs
-    #SBATCH --partition=gpu
-    #SBATCH --gres=gpu:v100:1
-    #SBATCH --ntasks=1
-    #SBATCH --cpus-per-task=10
-    #SBATCH --mem-per-cpu=8000
-    #SBATCH --time=00:20:00
+   #!/bin/bash
 
-    export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
-    module load gcc/9.1.0 hpcx-mpi/2.4.0 gromacs/2020.4-cuda
+   #SBATCH --time=00:15:00
+   #SBATCH --partition=gpu
+   #SBATCH --ntasks=1
+   #SBATCH --cpus-per-task=10
+   #SBATCH --gres=gpu:v100:1
+   #SBATCH --account=project_2003752
+   #SBATCH --reservation=gmx3
 
-    srun gmx_mpi mdrun
+   module purge
+   module load gromacs-env/2021-gpu
+   export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+
+   srun gmx_mpi mdrun
+
 
 If that was in a file ``run-script.sh`` then we can submit it to the
 Puhti batch queue with ``sbatch run-script.sh``. For this workshop,

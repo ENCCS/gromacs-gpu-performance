@@ -39,6 +39,14 @@ calculation, so there is a natural place to focus effort.
 How do GPUs help?
 -----------------
 
+.. figure:: img/MPIandOpenMPandGPU.png
+   :align: center
+
+   Using GPUs in addition to MPI ranks and OpenMP threads to explore parallelism.
+   Many GPU threads can significantly speed-up the evaluation of compute-intense tasks.
+   However, to get the best out of it, the domain has to contain thousands to tens of thousands
+   off particles.   
+
 GPUs are electronic devices that are massively parallel, often with
 thousands of identical compute units ready to all do the same thing.
 This was developed for the challenge of rendering complex images onto
@@ -147,14 +155,14 @@ to group those clusters into clusters of clusters, also!
    least one particle in i1, while particles in clusters intersected
    by the buffered cutoff that fall outside of it represent an extra
    implicit buffer. Right panel: hierarchical super-clusters on
-   GPUs. Clusters i1–i4 (green, magenta, red, and blue) are grouped
+   GPUs. Clusters i1--i4 (green, magenta, red, and blue) are grouped
    into a super-cluster. Dashed lines represent buffered cutoffs of
    each i-cluster. Clusters with any particle in any region will be
    included in the common pair list. Particles of j-clusters in the
    joint list are illustrated by discs filled in black to gray; black
    indicates clusters that interact with all four i-clusters, while
    lighter gray shading indicates that a cluster only interacts with
-   1–3 i-cluster(s), e.g., jm only with i4. Image used with permission
+   1--3 i-cluster(s), e.g., jm only with i4. Image used with permission
    from https://doi.org/10.1063/5.0018516.
 
 

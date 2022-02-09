@@ -17,7 +17,7 @@ how you as a user can get the best value from that.
    :delim: ;
 
    20 min ; :doc:`introduction`
-   20 min ; :doc:`navigator`
+   20 min ; :doc:`puhti`
    40 min ; :doc:`md-algorithm`
    50 min ; :doc:`using-pme`
    15 min ; :doc:`general-considerations`
@@ -28,9 +28,11 @@ how you as a user can get the best value from that.
    :caption: The lesson
 
    introduction
-   navigator
+   puhti
+   cpu-runs
    md-algorithm
    using-pme
+   multi-gpu
    general-considerations
 
 

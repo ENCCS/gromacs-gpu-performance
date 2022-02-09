@@ -12,8 +12,8 @@ Introduction
    - Know the human value of getting "good enough" performance
 
 
-Why do we need good performance from GROMACS on GPUs
-----------------------------------------------------
+Why do we need good performance from GROMACS
+--------------------------------------------
 
 Molecular dynamics simulations iteratively solve equations of motion
 to sample a thermodynamic ensemble. Particle positions are used to

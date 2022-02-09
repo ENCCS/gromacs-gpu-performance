@@ -2,9 +2,9 @@
 
 #SBATCH --time=00:15:00
 #SBATCH --partition=gpu
-#SBATCH --ntasks=1
+#SBATCH --ntasks=**FIXME**
 #SBATCH --cpus-per-task=10
-#SBATCH --gres=gpu:v100:1
+#SBATCH --gres=gpu:v100:**FIXME**
 #SBATCH --account=project_2003752
 #SBATCH --reservation=gmx3
 

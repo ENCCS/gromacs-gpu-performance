@@ -1,29 +1,26 @@
-#!/bin/bash -l
-#SBATCH --job-name=rf
-#SBATCH --account=training
-#SBATCH --partition=gpu
-#SBATCH --gres=gpu:v100:1
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=20
-#SBATCH --mem=20GB
-#SBATCH --time=00:10:00
+#!/bin/bash
 
-# Load the GROMACS module and its dependencies
-module load CUDA FFTW OpenBLAS ScaLAPACK Python GCC/9
-source /veracruz/projects/t/training/gromacs-2021.3/bin/GMXRC
-# Ensure that mdrun uses all the CPU cores well
+#SBATCH --time=00:15:00
+#SBATCH --partition=gpu
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=10
+#SBATCH --gres=gpu:v100:1
+#SBATCH --account=project_2003752
+#SBATCH --reservation=gmx3
+
+module purge
+module load gromacs-env/2021-gpu
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
-export SLURM_CPU_BIND=none
 
 # Make sure we don't spend time writing useless output
-options="-ntmpi 1 -noconfout"
+options="-nsteps 20000 -resetstep 19000 -ntomp $SLURM_CPUS_PER_TASK -pin on -pinstride 1"
 
 # Run mdrun with the default task assignment
-srun gmx mdrun $options -g default
+srun gmx mdrun $options -g default.log
 # Run mdrun assigning the non-bonded and bonded interactions to the GPU
-srun gmx mdrun $options -g manual-nb-bonded  -nb gpu -bonded gpu
+srun gmx mdrun $options -g manual-nb-bonded.log  -nb gpu -bonded gpu
 # Run mdrun assigning only the non-bonded interactions to the GPU
-srun gmx mdrun $options -g manual-nb         -nb gpu -bonded cpu
+srun gmx mdrun $options -g manual-nb.log         -nb gpu -bonded cpu
 
 # Let us know we're done
 echo Done
