@@ -61,7 +61,7 @@ those pieces of work are not concurrent. Hopefully, Mary has
 something else to do in the meantime until Dinesh is finished. But
 if not, the team is inefficient. Does MD have concurrency?
 
-Fortunately, the the forces we need to compute naturally come in a
+Fortunately, the forces we need to compute naturally come in a
 few classes, and those happen to be concurrent.
 
 .. figure:: img/forces-concurrency.svg
