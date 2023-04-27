@@ -92,3 +92,10 @@ html_context = {'display_github': True,
 #    #'python': ('https://docs.python.org/3', None),
 #    #'sphinx': ('https://www.sphinx-doc.org/', None),
 #    }
+
+import os
+if os.environ.get('GITHUB_REF', '') == 'refs/heads/main':
+    html_js_files = [
+        ('https://plausible.io/js/script.js', {"data-domain": "enccs.github.io/gromacs-gpu-performance", "defer": "\
+defer"}),
+    ]
