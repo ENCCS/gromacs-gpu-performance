@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Getting performance from the MD algorithm &mdash; GROMACS GPU Performance</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/togglebutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sphinx_lesson.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sphinx_rtd_theme_ext_color_contrast.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/tabs.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script src="../_static/minipres.js"></script>
+        <script>let toggleHintShow = 'Click to show';</script>
+        <script>let toggleHintHide = 'Click to hide';</script>
+        <script>let toggleOpenOnPrint = 'true';</script>
+        <script src="../_static/togglebutton.js"></script>
+        <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script data-domain="enccs.github.io/gromacs-gpu-performance" defer="defer" src="https://plausible.io/js/script.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex/" />
+    <link rel="search" title="Search" href="../search/" />
+    <link rel="next" title="Performant PME simulations" href="../using-pme/" />
+    <link rel="prev" title="Using CPUs efficiently" href="../cpu-runs/" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../" class="icon icon-home">
+            GROMACS GPU Performance
+              <img src="../_static/ENCCS.jpg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search/" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">The lesson</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction/">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../puhti/">Understanding Puhti GPU nodes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cpu-runs/">Using CPUs efficiently</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting performance from the MD algorithm</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#workflow-within-an-md-simulation">Workflow within an MD simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-do-gpus-help">How do GPUs help?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#short-ranged-non-bonded-forces">Short-ranged non-bonded forces</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bonded-forces">Bonded forces</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../using-pme/">Performant PME simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../multi-gpu/">Using multiple GPUs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../general-considerations/">General considerations for performance</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../quick-reference/">Quick Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/">Instructor’s guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../">GROMACS GPU Performance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Getting performance from the MD algorithm</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/ENCCS/gromacs-gpu-performance/blob/master/content/md-algorithm.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="getting-performance-from-the-md-algorithm">
+<h1>Getting performance from the MD algorithm<a class="headerlink" href="#getting-performance-from-the-md-algorithm" title="Permalink to this heading"></a></h1>
+<div class="admonition-questions questions admonition" id="questions-0">
+<p class="admonition-title">Questions</p>
+<ul class="simple">
+<li><p>What aspects of the MD algorithm are most important for performance?</p></li>
+<li><p>What do I need to know as a user to understand the performance?</p></li>
+</ul>
+</div>
+<div class="admonition-objectives objectives admonition" id="objectives-0">
+<p class="admonition-title">Objectives</p>
+<ul class="simple">
+<li><p>Be able to name the most important parts of the MD workflow</p></li>
+<li><p>Appreciate some of the internal architecture of <cite>mdrun</cite></p></li>
+</ul>
+</div>
+<section id="workflow-within-an-md-simulation">
+<h2>Workflow within an MD simulation<a class="headerlink" href="#workflow-within-an-md-simulation" title="Permalink to this heading"></a></h2>
+<figure class="align-center" id="id1">
+<img alt="../_images/molecular-dynamics-workflow.svg" src="../_images/molecular-dynamics-workflow.svg" /><figcaption>
+<p><span class="caption-text">Stages of the iterative pipeline that is implemented by molecular dynamics engines like <cite>mdrun</cite></span><a class="headerlink" href="#id1" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>How long it takes to compute a stage of the pipeline depends on two factors:</p>
+<ul class="simple">
+<li><p>how fast the arithmetic needs to be done</p></li>
+<li><p>how fast the data moves to where it needs to be</p></li>
+</ul>
+<p>The latter gets harder when GPUs are involved, because they are
+physically separated from the CPU. Fortunately, they also tend to make
+the former possible to make faster. Unfortunately, which one dominates
+is hard to analyse in general. The amount of arithmetic varies for
+each simulation system, and how long it would take to move the data
+somewhere else to do the arithmetic isn’t known in advance. Diversity
+makes our lives hard, both as users and developers!</p>
+<p>The good news is that most of the arithmetic is in the force
+calculation, so there is a natural place to focus effort.</p>
+</section>
+<section id="how-do-gpus-help">
+<h2>How do GPUs help?<a class="headerlink" href="#how-do-gpus-help" title="Permalink to this heading"></a></h2>
+<figure class="align-center" id="id2">
+<img alt="../_images/MPIandOpenMPandGPU.png" src="../_images/MPIandOpenMPandGPU.png" />
+<figcaption>
+<p><span class="caption-text">Using GPUs in addition to MPI ranks and OpenMP threads to explore parallelism.
+Many GPU threads can significantly speed-up the evaluation of compute-intense tasks.
+However, to get the best out of it, the domain has to contain thousands to tens of thousands
+off particles.</span><a class="headerlink" href="#id2" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>GPUs are electronic devices that are massively parallel, often with
+thousands of identical compute units ready to all do the same thing.
+This was developed for the challenge of rendering complex images onto
+computer screens, but the good work done there has also been built
+upon to do more general computation.</p>
+<p>Before <em>parallelism</em> helps, we need to know that there is
+<em>concurrency</em>, ie that there are independent pieces of work that can
+be separated out. This is the same challenge we see in human teams…
+if Mary can’t start her work until Dinesh is done his piece, then
+those pieces of work are not concurrent. Hopefully, Mary has
+something else to do in the meantime until Dinesh is finished. But
+if not, the team is inefficient. Does MD have concurrency?</p>
+<p>Fortunately, the forces we need to compute naturally come in a
+few classes, and those happen to be concurrent.</p>
+<figure class="align-center" id="id3">
+<img alt="../_images/forces-concurrency.svg" src="../_images/forces-concurrency.svg" /><figcaption>
+<p><span class="caption-text">MD force fields use different components to describe different
+kinds of chemical interactions. Each has a set of static parameter
+data used to compute forces based on the positions. Those
+computations don’t depend on each other, so they are concurrent and
+may be parallelised.</span><a class="headerlink" href="#id3" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>Moving the most computationally intensive force-computation tasks to
+the GPU will let us exploit parallelism to compute faster.</p>
+<div class="admonition-quiz-what-is-the-best-reason-for-moving-the-most-computationally-expensive-tasks-to-the-gpu exercise important admonition" id="exercise-0">
+<p class="admonition-title">2.1 Quiz: What is the best reason for moving the
+<em>most</em> computationally expensive tasks to the GPU?</p>
+<ol class="arabic simple">
+<li><p>CPUs cost more than GPUs</p></li>
+<li><p>GPUs are good for computationally expensive tasks</p></li>
+<li><p>They are the simplest to write GPU code for</p></li>
+<li><p>It makes room for running many different kinds of
+tasks on the CPU in parallel with the GPU</p></li>
+</ol>
+</div>
+<div class="admonition-solution solution important dropdown admonition" id="solution-0">
+<p class="admonition-title">Solution</p>
+<ol class="arabic simple" start="4">
+<li><p>Given that GROMACS already had a fast CPU implementation, moving
+the biggest workload to the GPU provides the best
+parallelism. There are grains of truth in the other answers,
+however.</p></li>
+</ol>
+</div>
+</section>
+<section id="short-ranged-non-bonded-forces">
+<h2>Short-ranged non-bonded forces<a class="headerlink" href="#short-ranged-non-bonded-forces" title="Permalink to this heading"></a></h2>
+<p>For some kinds of system, it is enough to model the non-bonded forces
+by treating only short-ranged interactions. Because the Coulomb
+interaction between particles decays as <span class="math notranslate nohighlight">\(\frac{1}{r}\)</span> for distance
+<span class="math notranslate nohighlight">\(r\)</span>, after a certain distance the interactions become
+neglible. Cancellation from similar contributions on the other side of
+a particle also helps here.</p>
+<p>The simplest way to do this is to loop over all pairs of particles and
+compute the interactions only when <span class="math notranslate nohighlight">\(r\)</span> is within a
+pre-determined range. This works, but is highly inefficient, because
+the particles move slowly enough that it’s almost the same interacting
+set each time. Its cost also scales with the square of the number of
+particles <span class="math notranslate nohighlight">\(N\)</span>, which is poor when <span class="math notranslate nohighlight">\(N\)</span> becomes large. So,
+instead a <em>pair list</em> is formed of particles that are close enough to
+interact (sometimes called a <em>Verlet list</em> or <em>neighbor list</em>). That
+pair list is re-used for many MD steps, until the diffusion of
+particles makes it necessary to rebuild it. It is also nice that this
+scales only with <span class="math notranslate nohighlight">\(N\)</span>, too.</p>
+<figure class="align-center" id="id4">
+<img alt="../_images/molecular-dynamics-short-range-and-pair-lists.svg" src="../_images/molecular-dynamics-short-range-and-pair-lists.svg" /><figcaption>
+<p><span class="caption-text">Molecular dynamics workflow for a system with only short-ranged
+non-bonded interactions.</span><a class="headerlink" href="#id4" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>Particles still diffuse across the boundary at each step, so GROMACS
+adds a buffer to the required interaction distance when building the
+list. At each step, the distance is checked when actually deciding
+whether to add the interaction to the forces. That is a source of
+inefficiency, but to do better we’d have to recompute the pair list
+more often, and that turns out to hurt more than helps! GROMACS will
+automatically determine a buffer size for you, based on your choice of
+an acceptable amount of drift in the total energy (see
+<a class="reference external" href="https://manual.gromacs.org/current/reference-manual/algorithms/molecular-dynamics.html#energy-drift-and-pair-list-buffering">https://manual.gromacs.org/current/reference-manual/algorithms/molecular-dynamics.html#energy-drift-and-pair-list-buffering</a>). The
+default values are quite defensive, but it is not recommended to
+change them because any performance benefit will be slight.</p>
+<p>Further, it turns out that pair lists of single particles run slower
+than pair lists of <em>clusters</em> of particles. Small clusters of
+particles are normally either all interacting with each other, or all
+not interacting with each other, just like particles. Moving the data
+for the computation from memory to the compute unit is more efficient
+with small clusters, so GROMACS does it that way. The clusters have
+nothing to do with molecules or bonds, merely that the particles in
+them are close together. On GPUs, it turns out to be most efficient
+to group those clusters into clusters of clusters, also!</p>
+<figure class="align-center" id="id5">
+<img alt="../_images/short-range-cluster-pair-setups.jpg" src="../_images/short-range-cluster-pair-setups.jpg" />
+<figcaption>
+<p><span class="caption-text">Illustration of clusters of four particles. Left panel: CPU-centric
+setup. All clusters with solid lines are included in the pair list
+of cluster i1 (green). Clusters with filled circles have
+interactions within the buffered cutoff (green dashed line) of at
+least one particle in i1, while particles in clusters intersected
+by the buffered cutoff that fall outside of it represent an extra
+implicit buffer. Right panel: hierarchical super-clusters on
+GPUs. Clusters i1–i4 (green, magenta, red, and blue) are grouped
+into a super-cluster. Dashed lines represent buffered cutoffs of
+each i-cluster. Clusters with any particle in any region will be
+included in the common pair list. Particles of j-clusters in the
+joint list are illustrated by discs filled in black to gray; black
+indicates clusters that interact with all four i-clusters, while
+lighter gray shading indicates that a cluster only interacts with
+1–3 i-cluster(s), e.g., jm only with i4. Image used with permission
+from <a class="reference external" href="https://doi.org/10.1063/5.0018516">https://doi.org/10.1063/5.0018516</a>.</span><a class="headerlink" href="#id5" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="bonded-forces">
+<h2>Bonded forces<a class="headerlink" href="#bonded-forces" title="Permalink to this heading"></a></h2>
+<p>Many interesting systems feature particles that have chemical bonds
+that are not modelled well by non-bonded interactions. These require
+evaluating quite different mathematical functions from the non-bonded
+interactions, so they make sense to execute separately. These can also
+be evaluated on either the CPU or the GPU.</p>
+<figure class="align-center" id="id6">
+<img alt="../_images/molecular-dynamics-workflow-short-range-gpu-bonded-cpu.svg" src="../_images/molecular-dynamics-workflow-short-range-gpu-bonded-cpu.svg" /><figcaption>
+<p><span class="caption-text">Workflow with short-ranged on the GPU and bonded on the CPU. This
+is the default behavior in GROMACS, and can be selected with <code class="docutils literal notranslate"><span class="pre">gmx</span>
+<span class="pre">mdrun</span> <span class="pre">-nb</span> <span class="pre">gpu</span> <span class="pre">-bonded</span> <span class="pre">cpu</span></code>.</span><a class="headerlink" href="#id6" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<figure class="align-center" id="id7">
+<img alt="../_images/molecular-dynamics-workflow-short-range-gpu-bonded-gpu.svg" src="../_images/molecular-dynamics-workflow-short-range-gpu-bonded-gpu.svg" /><figcaption>
+<p><span class="caption-text">Workflow with both short-ranged and bonded on the GPU. This can be
+selected with <code class="docutils literal notranslate"><span class="pre">gmx</span> <span class="pre">mdrun</span> <span class="pre">-nb</span> <span class="pre">gpu</span> <span class="pre">-bonded</span> <span class="pre">gpu</span></code>.</span><a class="headerlink" href="#id7" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>Now there are two different ways we can run on the GPU. One exploits
+parallelism with the CPU, and one does not.</p>
+<div class="admonition-quiz-when-would-it-be-most-likely-to-benefit-from-moving-bonded-interactions-to-the-gpu exercise important admonition" id="exercise-1">
+<p class="admonition-title">2.2 Quiz: When would it be most likely to benefit
+            from moving bonded interactions to the GPU?</p>
+<ol class="arabic simple">
+<li><p>Few bonded interactions and relatively weak CPU</p></li>
+<li><p>Few bonded interactions and relatively strong CPU</p></li>
+<li><p>Many bonded interactions and relatively weak CPU</p></li>
+<li><p>Many bonded interactions and relatively strong CPU</p></li>
+</ol>
+</div>
+<div class="admonition-solution solution important dropdown admonition" id="solution-1">
+<p class="admonition-title">Solution</p>
+<ol class="arabic simple" start="3">
+<li><p>Running two tasks on the GPU adds overhead there, and that
+offsets any benefit from speeding up the bonded work by running
+it on the GPU. If the CPU is powerful enough to finish the
+bonded work before the GPU finishes the short-ranged work, then
+exploiting the CPU-GPU parallelism is best.</p></li>
+</ol>
+</div>
+<div class="admonition-explore-performance-with-bonded-interactions exercise important admonition" id="exercise-2">
+<p class="admonition-title">Explore performance with bonded interactions</p>
+<p>Make a new folder for this exercise, e.g. <code class="docutils literal notranslate"><span class="pre">mkdir</span>
+<span class="pre">performance-with-bonded;</span> <span class="pre">cd</span> <span class="pre">performance-with-bonded</span></code>.</p>
+<p><a class="reference download internal" download="" href="../_downloads/9fde2ac5c8fdf1aee2af2d09dd681aa0/topol.tpr"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">the</span> <span class="pre">run</span> <span class="pre">input</span> <span class="pre">file</span></code></a> prepared to do 50000
+steps of a reaction-field simulation. We’ll use it to experiment
+with task assignment.</p>
+<p><a class="reference download internal" download="" href="../_downloads/2e8cce4622f2d116ea692ebb1261fdb4/script.sh"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">the</span> <span class="pre">job</span> <span class="pre">submission</span> <span class="pre">script</span></code></a> where you will see
+several lines marked <code class="docutils literal notranslate"><span class="pre">**FIXME**</span></code>. Remove the <code class="docutils literal notranslate"><span class="pre">**FIXME**</span></code> to
+achieve the goal stated in the comment before that line. You will
+need to refer to the information above to achieve that. Save the
+file and exit. Note that this script was designed to run on the
+Puhti cluster. If you are not running on Puhti, then you will need
+to make further changes to this file. Check the documentation for
+how to submit jobs to your cluster!</p>
+<p>Submit the script to the SLURM job manager with <code class="docutils literal notranslate"><span class="pre">sbatch</span>
+<span class="pre">script.sh</span></code>. It will reply something like <code class="docutils literal notranslate"><span class="pre">Submitted</span> <span class="pre">batch</span> <span class="pre">job</span>
+<span class="pre">4565494</span></code> when it succeeded. The job manager will write terminal
+output to a file named like <code class="docutils literal notranslate"><span class="pre">slurm-4565494.out</span></code>. It may take a
+few minutes to start and a few more minutes to run.</p>
+<p>While it is running, you can use <code class="docutils literal notranslate"><span class="pre">tail</span> <span class="pre">-f</span> <span class="pre">slurm*out</span></code> to watch the
+output. When it says “Done” then the runs are finished. Use Ctrl-C
+to exit the <code class="docutils literal notranslate"><span class="pre">tail</span></code> command that you ran.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">*.log</span></code> files contain the performance (in ns/day) of each run
+on the last line. Use <code class="docutils literal notranslate"><span class="pre">tail</span> <span class="pre">*log</span></code> to see the last chunk of each
+log file. Examine the performance in ns/day for each trajectory.
+Have a look through the log files and see what you can learn.</p>
+</div>
+<div class="admonition-solution solution important dropdown admonition" id="solution-2">
+<p class="admonition-title">Solution</p>
+<p>You can download a <a class="reference download internal" download="" href="../_downloads/bbde99ca44058bffc332bc4609526521/script.sh"><code class="xref download docutils literal notranslate"><span class="pre">working</span> <span class="pre">version</span></code></a> of the batch
+submission script. Its diff from the original is file</p>
+<div class="highlight-udiff notranslate"><div class="highlight"><pre><span></span><span class="gd">--- /home/runner/work/gromacs-gpu-performance/gromacs-gpu-performance/content/exercises/performance-with-bonded/script.sh</span>
+<span class="gi">+++ /home/runner/work/gromacs-gpu-performance/gromacs-gpu-performance/content/answers/performance-with-bonded/script.sh</span>
+<span class="gu">@@ -12,16 +12,15 @@</span>
+<span class="w"> </span>module load gromacs-env/2021-gpu
+<span class="w"> </span>export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+<span class="w"> </span>
+<span class="gd">-</span>
+<span class="w"> </span># Make sure we don&#39;t spend time writing useless output
+<span class="w"> </span>options=&quot;-nsteps 20000 -resetstep 19000 -ntomp $SLURM_CPUS_PER_TASK -pin on -pinstride 1&quot;
+<span class="w"> </span>
+<span class="w"> </span># Run mdrun with the default task assignment
+<span class="w"> </span>srun gmx mdrun $options -g default.log
+<span class="w"> </span># Run mdrun assigning the non-bonded and bonded interactions to the GPU
+<span class="gd">-srun gmx mdrun $options -g manual-nb-bonded.log  **FIXME**</span>
+<span class="gi">+srun gmx mdrun $options -g manual-nb-bonded.log  -nb gpu -bonded gpu</span>
+<span class="w"> </span># Run mdrun assigning only the non-bonded interactions to the GPU
+<span class="gd">-srun gmx mdrun $options -g manual-nb.log         **FIXME**</span>
+<span class="gi">+srun gmx mdrun $options -g manual-nb.log         -nb gpu -bonded cpu</span>
+<span class="w"> </span>
+<span class="w"> </span># Let us know we&#39;re done
+<span class="w"> </span>echo Done
+</pre></div>
+</div>
+<p>Sample output it produced is available:</p>
+<ul class="simple">
+<li><p><a class="reference download internal" download="" href="../_downloads/3c4018a584b673c197522325f9521ab4/default.log"><code class="xref download docutils literal notranslate"><span class="pre">default.log</span></code></a></p></li>
+<li><p><a class="reference download internal" download="" href="../_downloads/31760d1d530f1e072a2f58924dac9f6f/manual-nb-bonded.log"><code class="xref download docutils literal notranslate"><span class="pre">manual-nb-bonded.log</span></code></a></p></li>
+<li><p><a class="reference download internal" download="" href="../_downloads/cfb21c01e2d3f87f05cc1af33040c1c0/manual-nb.log"><code class="xref download docutils literal notranslate"><span class="pre">manual-nb.log</span></code></a></p></li>
+</ul>
+<p>The tails of those log files are</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>==&gt; default.log &lt;==
+
+NOTE: 19 % of the run time was spent in pair search,
+      you might want to increase nstlist (this has no effect on accuracy)
+
+               Core t (s)   Wall t (s)        (%)
+       Time:      326.182       16.310     1999.9
+                 (ns/day)    (hour/ns)
+Performance:      529.746        0.045
+Finished mdrun on rank 0 Thu Sep  9 09:04:24 2021
+
+
+==&gt; manual-nb-bonded.log &lt;==
+
+NOTE: 18 % of the run time was spent in pair search,
+      you might want to increase nstlist (this has no effect on accuracy)
+
+               Core t (s)   Wall t (s)        (%)
+       Time:      340.917       17.047     1999.9
+                 (ns/day)    (hour/ns)
+Performance:      506.852        0.047
+Finished mdrun on rank 0 Thu Sep  9 09:04:44 2021
+
+
+==&gt; manual-nb.log &lt;==
+
+NOTE: 19 % of the run time was spent in pair search,
+      you might want to increase nstlist (this has no effect on accuracy)
+
+               Core t (s)   Wall t (s)        (%)
+       Time:      322.644       16.133     1999.9
+                 (ns/day)    (hour/ns)
+Performance:      535.554        0.045
+Finished mdrun on rank 0 Thu Sep  9 09:05:04 2021
+</pre></div>
+</div>
+<p>Depending on the underlying variability of the performance of this
+trajectory on this hardware, we might be able to observe which configuration
+corresponds to the default, and whether offloading bonded interactions is
+advantageous, or not. Run the scripts a few times to get a crude impression
+of that variability!</p>
+</div>
+<div class="admonition-keypoints keypoints admonition" id="keypoints-0">
+<p class="admonition-title">Keypoints</p>
+<ul class="simple">
+<li><p>Concurrent force calculations can be computed in parallel</p></li>
+<li><p>GROMACS handles buffered short-range interactions automatically for you</p></li>
+</ul>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../cpu-runs/" class="btn btn-neutral float-left" title="Using CPUs efficiently" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../using-pme/" class="btn btn-neutral float-right" title="Performant PME simulations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, EuroCC National Competence Centre Sweden.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

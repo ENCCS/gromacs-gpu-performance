@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Using CPUs efficiently &mdash; GROMACS GPU Performance</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/togglebutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sphinx_lesson.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sphinx_rtd_theme_ext_color_contrast.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/tabs.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script src="../_static/minipres.js"></script>
+        <script>let toggleHintShow = 'Click to show';</script>
+        <script>let toggleHintHide = 'Click to hide';</script>
+        <script>let toggleOpenOnPrint = 'true';</script>
+        <script src="../_static/togglebutton.js"></script>
+        <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+        <script data-domain="enccs.github.io/gromacs-gpu-performance" defer="defer" src="https://plausible.io/js/script.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex/" />
+    <link rel="search" title="Search" href="../search/" />
+    <link rel="next" title="Getting performance from the MD algorithm" href="../md-algorithm/" />
+    <link rel="prev" title="Understanding Puhti GPU nodes" href="../puhti/" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../" class="icon icon-home">
+            GROMACS GPU Performance
+              <img src="../_static/ENCCS.jpg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search/" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">The lesson</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction/">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../puhti/">Understanding Puhti GPU nodes</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Using CPUs efficiently</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#mpi-ranks-and-openmp-threads">MPI ranks and OpenMP threads</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ensemble-runs-as-an-efficient-way-to-use-computational-resources">Ensemble runs as an efficient way to use computational resources</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../md-algorithm/">Getting performance from the MD algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using-pme/">Performant PME simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../multi-gpu/">Using multiple GPUs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../general-considerations/">General considerations for performance</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../quick-reference/">Quick Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/">Instructor’s guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../">GROMACS GPU Performance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Using CPUs efficiently</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/ENCCS/gromacs-gpu-performance/blob/master/content/cpu-runs.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="using-cpus-efficiently">
+<h1>Using CPUs efficiently<a class="headerlink" href="#using-cpus-efficiently" title="Permalink to this heading"></a></h1>
+<div class="admonition-questions questions admonition" id="questions-0">
+<p class="admonition-title">Questions</p>
+<ul class="simple">
+<li><p>Should I use MPI ranks or OpenMP threads?</p></li>
+<li><p>Single trajectory performance vs. high throughput.</p></li>
+</ul>
+</div>
+<div class="admonition-objectives objectives admonition" id="objectives-0">
+<p class="admonition-title">Objectives</p>
+<ul class="simple">
+<li><p>Understand the difference between MPI ranks and OpenMP threads.</p></li>
+</ul>
+</div>
+<section id="mpi-ranks-and-openmp-threads">
+<h2>MPI ranks and OpenMP threads<a class="headerlink" href="#mpi-ranks-and-openmp-threads" title="Permalink to this heading"></a></h2>
+<p>In GROMACS, there are two ways to explore parallelism on a CPU.
+The first one is using domain decomposition: the simulation volume is
+divided over several regions, called domains. Each domain is assigned
+to an MPI rank. Ranks communicate when needed. Second, more granular way
+is by using OpenMP threads, which are spawned within the ranks when there
+is extra parallelism to explore. Indeed, each domain contains more than one
+particle, each of which can be propagated independently in independent thread.</p>
+<figure class="align-center" id="id1">
+<img alt="../_images/MPIandOpenMP.png" src="../_images/MPIandOpenMP.png" />
+<figcaption>
+<p><span class="caption-text">Domains, MPI ranks and OpenMP threads. Simulation region is divided into
+parts, called domains. Each domain is mapped to an MPI rank, which handles
+computations for particles within domain. The ranks communicate with each
+other, sending and receiving the data in the bordering (or halo) regions.
+More fine-grained parallelism can be explored with OpenMP threads, that
+allow to compute for different particles within single domain simultaneously.</span><a class="headerlink" href="#id1" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>Let us explore the two ways of using many cores on a CPU. We are not going to use
+the entire node of the cluster, but only cores that correspond to a single GPU.
+On Puhti, this is 10 CPU cores.</p>
+<div class="admonition-explore-performance-with-mpi-and-openmp exercise important admonition" id="exercise-0">
+<p class="admonition-title">Explore performance with MPI and OpenMP</p>
+<p>We start with the following job script.</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+
+<span class="c1">#SBATCH --time=00:15:00</span>
+<span class="c1">#SBATCH --partition=test</span>
+<span class="c1">#SBATCH --ntasks=XX</span>
+<span class="c1">#SBATCH --cpus-per-task=YY</span>
+<span class="c1">#SBATCH --account=project_2003752</span>
+
+module<span class="w"> </span>purge
+module<span class="w"> </span>load<span class="w"> </span>gromacs-env/2021-gpu
+<span class="nb">export</span><span class="w"> </span><span class="nv">OMP_NUM_THREADS</span><span class="o">=</span><span class="nv">$SLURM_CPUS_PER_TASK</span>
+
+srun<span class="w"> </span>gmx_mpi<span class="w"> </span>mdrun<span class="w"> </span>-ntomp<span class="w"> </span><span class="nv">$SLURM_CPUS_PER_TASK</span><span class="w"> </span>-nsteps<span class="w"> </span><span class="m">20000</span><span class="w"> </span>-resetstep<span class="w"> </span><span class="m">19000</span>
+</pre></div>
+</div>
+<ol class="arabic simple">
+<li><p>Modify the script so it will use all 10 cores as MPI ranks.</p></li>
+<li><p>Modify the script so it will use all 10 cores as OpenMP threads.</p></li>
+<li><p>Try some intermediate values, when there are both MPI ranks and OpenMP threads.</p></li>
+</ol>
+</div>
+<div class="admonition-solution solution important dropdown admonition" id="solution-0">
+<p class="admonition-title">Solution</p>
+<dl>
+<dt>1.:</dt><dd><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+
+<span class="c1">#SBATCH --time=00:15:00</span>
+<span class="c1">#SBATCH --partition=test</span>
+<span class="c1">#SBATCH --ntasks=10</span>
+<span class="c1">#SBATCH --cpus-per-task=1</span>
+<span class="c1">#SBATCH --account=project_2003752</span>
+
+module<span class="w"> </span>purge
+module<span class="w"> </span>load<span class="w"> </span>gromacs-env/2021-gpu
+<span class="nb">export</span><span class="w"> </span><span class="nv">OMP_NUM_THREADS</span><span class="o">=</span><span class="nv">$SLURM_CPUS_PER_TASK</span>
+
+srun<span class="w"> </span>gmx_mpi<span class="w"> </span>mdrun<span class="w"> </span>-ntomp<span class="w"> </span><span class="nv">$SLURM_CPUS_PER_TASK</span><span class="w"> </span>-nsteps<span class="w"> </span><span class="m">20000</span><span class="w"> </span>-resetstep<span class="w"> </span><span class="m">19000</span>
+</pre></div>
+</div>
+</dd>
+<dt>2.:</dt><dd><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+
+<span class="c1">#SBATCH --time=00:15:00</span>
+<span class="c1">#SBATCH --partition=test</span>
+<span class="c1">#SBATCH --ntasks=1</span>
+<span class="c1">#SBATCH --cpus-per-task=10</span>
+<span class="c1">#SBATCH --account=project_2003752</span>
+
+module<span class="w"> </span>purge
+module<span class="w"> </span>load<span class="w"> </span>gromacs-env/2021-gpu
+<span class="nb">export</span><span class="w"> </span><span class="nv">OMP_NUM_THREADS</span><span class="o">=</span><span class="nv">$SLURM_CPUS_PER_TASK</span>
+
+srun<span class="w"> </span>gmx_mpi<span class="w"> </span>mdrun<span class="w"> </span>-ntomp<span class="w"> </span><span class="nv">$SLURM_CPUS_PER_TASK</span><span class="w"> </span>-nsteps<span class="w"> </span><span class="m">20000</span><span class="w"> </span>-resetstep<span class="w"> </span><span class="m">19000</span>
+</pre></div>
+</div>
+</dd>
+</dl>
+<ol class="arabic" start="3">
+<li><p>For example:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+
+<span class="c1">#SBATCH --time=00:15:00</span>
+<span class="c1">#SBATCH --partition=test</span>
+<span class="c1">#SBATCH --ntasks=5</span>
+<span class="c1">#SBATCH --cpus-per-task=2</span>
+<span class="c1">#SBATCH --account=project_2003752</span>
+
+module<span class="w"> </span>purge
+module<span class="w"> </span>load<span class="w"> </span>gromacs-env/2021-gpu
+<span class="nb">export</span><span class="w"> </span><span class="nv">OMP_NUM_THREADS</span><span class="o">=</span><span class="nv">$SLURM_CPUS_PER_TASK</span>
+
+srun<span class="w"> </span>gmx_mpi<span class="w"> </span>mdrun<span class="w"> </span>-ntomp<span class="w"> </span><span class="nv">$SLURM_CPUS_PER_TASK</span><span class="w"> </span>-nsteps<span class="w"> </span><span class="m">20000</span><span class="w"> </span>-resetstep<span class="w"> </span><span class="m">19000</span>
+</pre></div>
+</div>
+</li>
+</ol>
+</div>
+<p>Note the following line in the <code class="docutils literal notranslate"><span class="pre">gmx</span> <span class="pre">mdrun</span></code> output:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Non</span><span class="o">-</span><span class="n">default</span> <span class="n">thread</span> <span class="n">affinity</span> <span class="nb">set</span><span class="p">,</span> <span class="n">disabling</span> <span class="n">internal</span> <span class="n">thread</span> <span class="n">affinity</span>
+</pre></div>
+</div>
+<p>This means that the threads are not pinned to the computational cores. So the execution can jump from one core to another,
+and from one NUMA domain to the other. This can be very inefficient, because data locality will be broken. to overcome this,
+one can enforce thread pinning using <code class="docutils literal notranslate"><span class="pre">-pin</span> <span class="pre">on</span></code> and <code class="docutils literal notranslate"><span class="pre">-pinstride</span> <span class="pre">1</span></code> options of <code class="docutils literal notranslate"><span class="pre">gmx</span> <span class="pre">mdrun</span></code>. The first option enforces
+thread pinning, the second — sets how they should be distributed over the cores (1 means consecutive). Note that on the
+systems where Simultaneous multithreading (SMT) is enabled, one may want to explore <code class="docutils literal notranslate"><span class="pre">-pinstride</span> <span class="pre">2</span></code> option, only running
+on physical cores.</p>
+</section>
+<section id="ensemble-runs-as-an-efficient-way-to-use-computational-resources">
+<h2>Ensemble runs as an efficient way to use computational resources<a class="headerlink" href="#ensemble-runs-as-an-efficient-way-to-use-computational-resources" title="Permalink to this heading"></a></h2>
+<div class="admonition-what-with-the-scaling exercise important admonition" id="exercise-1">
+<p class="admonition-title">What with the scaling?</p>
+<ol class="arabic simple">
+<li><p>Let us see how good is the scaling for our system. Use the most performant job script from the previous example and run simulations using
+5, 10 and 20 cores. How far is it from linear?</p></li>
+<li><p>Use the provided <code class="docutils literal notranslate"><span class="pre">create_inputs.sh</span></code> script to create inputs for ensemble run.</p></li>
+<li><p>Modify script so it will use 5 cores per run but will run 2 and 4 trajectories. What is the cumulative performance (number of runs times ns/day)?</p></li>
+</ol>
+</div>
+<div class="admonition-solution solution important dropdown admonition" id="solution-1">
+<p class="admonition-title">Solution</p>
+<p>For the system that we are using (~5000 atoms), the scaling is sub-optimal, with twice as many cores giving ~50% performance gain. Note that the scaling will be better for bigger MD systems.</p>
+<p>Script for two runs:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+
+<span class="c1">#SBATCH --time=00:15:00</span>
+<span class="c1">#SBATCH --partition=test</span>
+<span class="c1">#SBATCH --ntasks=10</span>
+<span class="c1">#SBATCH --cpus-per-task=1</span>
+<span class="c1">#SBATCH --account=project_2003752</span>
+
+module<span class="w"> </span>purge
+module<span class="w"> </span>load<span class="w"> </span>gromacs-env/2021-gpu
+<span class="nb">export</span><span class="w"> </span><span class="nv">OMP_NUM_THREADS</span><span class="o">=</span><span class="nv">$SLURM_CPUS_PER_TASK</span>
+
+srun<span class="w"> </span>gmx_mpi<span class="w"> </span>mdrun<span class="w"> </span>-ntomp<span class="w"> </span><span class="nv">$SLURM_CPUS_PER_TASK</span><span class="w"> </span>-nsteps<span class="w"> </span><span class="m">20000</span><span class="w"> </span>-resetstep<span class="w"> </span><span class="m">19000</span><span class="w"> </span>-pin<span class="w"> </span>on<span class="w"> </span>-pinstride<span class="w"> </span><span class="m">1</span><span class="w"> </span>-multidir<span class="w"> </span>ensemble_inputs/repl_01<span class="w"> </span>ensemble_inputs/repl_02
+</pre></div>
+</div>
+</div>
+<div class="admonition-keypoints keypoints admonition" id="keypoints-0">
+<p class="admonition-title">Keypoints</p>
+<ul class="simple">
+<li><p>The way CPU cores are used may affect performance</p></li>
+<li><p>Running en ensemble scales.</p></li>
+</ul>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../puhti/" class="btn btn-neutral float-left" title="Understanding Puhti GPU nodes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../md-algorithm/" class="btn btn-neutral float-right" title="Getting performance from the MD algorithm" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, EuroCC National Competence Centre Sweden.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Understanding Puhti GPU nodes &mdash; GROMACS GPU Performance</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/togglebutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sphinx_lesson.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sphinx_rtd_theme_ext_color_contrast.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/tabs.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script src="../_static/minipres.js"></script>
+        <script>let toggleHintShow = 'Click to show';</script>
+        <script>let toggleHintHide = 'Click to hide';</script>
+        <script>let toggleOpenOnPrint = 'true';</script>
+        <script src="../_static/togglebutton.js"></script>
+        <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+        <script data-domain="enccs.github.io/gromacs-gpu-performance" defer="defer" src="https://plausible.io/js/script.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex/" />
+    <link rel="search" title="Search" href="../search/" />
+    <link rel="next" title="Using CPUs efficiently" href="../cpu-runs/" />
+    <link rel="prev" title="Introduction" href="../introduction/" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../" class="icon icon-home">
+            GROMACS GPU Performance
+              <img src="../_static/ENCCS.jpg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search/" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">The lesson</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction/">Introduction</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Understanding Puhti GPU nodes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#trends-in-hpc-hardware">Trends in HPC hardware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#puhti-gpu-nodes">Puhti GPU nodes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#running-jobs-on-puhti">Running jobs on Puhti</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#see-also">See also</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../cpu-runs/">Using CPUs efficiently</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../md-algorithm/">Getting performance from the MD algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using-pme/">Performant PME simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../multi-gpu/">Using multiple GPUs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../general-considerations/">General considerations for performance</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../quick-reference/">Quick Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/">Instructor’s guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../">GROMACS GPU Performance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Understanding Puhti GPU nodes</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/ENCCS/gromacs-gpu-performance/blob/master/content/puhti.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="understanding-puhti-gpu-nodes">
+<h1>Understanding Puhti GPU nodes<a class="headerlink" href="#understanding-puhti-gpu-nodes" title="Permalink to this heading"></a></h1>
+<div class="admonition-questions questions admonition" id="questions-0">
+<p class="admonition-title">Questions</p>
+<ul class="simple">
+<li><p>What hardware is available on Puhti’s GPU nodes?</p></li>
+<li><p>How do we organize computational work to go where it should?</p></li>
+</ul>
+</div>
+<div class="admonition-objectives objectives admonition" id="objectives-0">
+<p class="admonition-title">Objectives</p>
+<ul class="simple">
+<li><p>Understand that the time to transfer data between compute units is finite</p></li>
+<li><p>Understand that managing the locality of data (and the tasks that use them) is critical for performance</p></li>
+</ul>
+</div>
+<section id="trends-in-hpc-hardware">
+<h2>Trends in HPC hardware<a class="headerlink" href="#trends-in-hpc-hardware" title="Permalink to this heading"></a></h2>
+<p>Most of the compute performance in new clusters and supercomputers
+will be made available in the form of GPUs that accompany the
+CPUs. Many applications, including GROMACS, have been ported to run on
+GPUs. The dominant GPU vendor in HPC is Nvidia, and their CUDA
+programming framework is close to ubiquitous in HPC applications like
+GROMACS. Recently, AMD and Intel have both won major contracts around
+the world to deliver GPU-enabled machines (e.g LUMI supercomputer at CSC,
+<a class="reference external" href="https://www.lumi-supercomputer.eu/">https://www.lumi-supercomputer.eu/</a>). So the future will be interesting.</p>
+<p>All such machines have the same general characteristics. There are
+many CPU cores, perhaps separated into a few sockets. There are a
+handful of GPUs, each with thousands of cores less powerful than the
+CPU cores. The GPUs are able to transfer data to nearby parts of the
+CPU, or to other GPUs.</p>
+</section>
+<section id="puhti-gpu-nodes">
+<h2>Puhti GPU nodes<a class="headerlink" href="#puhti-gpu-nodes" title="Permalink to this heading"></a></h2>
+<p>In this workshop we will focus on the GPU nodes of the supercomputer
+Puhti, located at CSC in Finland (see
+<a class="reference external" href="https://docs.csc.fi/computing/overview/">https://docs.csc.fi/computing/overview/</a>). It has 80 nodes with GPUs,
+and there are 4 GPUs on each node. Like nearly all modern hardware, it
+is built around the notion of <em>non-uniform memory access</em> (NUMA). Some
+parts of the memory are closer to a particular core than any other.
+To get best performance, users and programmers need to make sure that
+tasks are allocated to cores and GPUs that prefer the same memory.</p>
+<figure class="align-center" id="id1">
+<img alt="../_images/puhti-hpc-lstopo.png" src="../_images/puhti-hpc-lstopo.png" />
+<figcaption>
+<p><span class="caption-text">Slightly simplified output of <code class="docutils literal notranslate"><span class="pre">lstopo</span></code> on a Puhti GPU node. The
+40 cores and 4 gpus are divided evenly across 2 sockets. Compute
+resources in one socket are closer together than they are to
+resources in the other socket.</span><a class="headerlink" href="#id1" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<div class="admonition-quiz-which-range-of-cpu-cores-would-be-least-effective-to-use-in-work-related-to-gpu2 exercise important admonition" id="exercise-0">
+<p class="admonition-title">1.1 Quiz: Which range of CPU cores would be least
+effective to use in work related to gpu2?</p>
+<ol class="arabic simple">
+<li><p>Cores 0-9</p></li>
+<li><p>Cores 10-19</p></li>
+<li><p>Cores 0-19</p></li>
+<li><p>Cores 20-39</p></li>
+</ol>
+</div>
+<div class="admonition-solution solution important dropdown admonition" id="solution-0">
+<p class="admonition-title">Solution</p>
+<ol class="arabic simple" start="4">
+<li><p>Cores 20-39 in NUMANode 1 would prefer to use different memory
+than <code class="docutils literal notranslate"><span class="pre">gpu2</span></code>. Data transfer will be less efficient.</p></li>
+</ol>
+</div>
+</section>
+<section id="running-jobs-on-puhti">
+<h2>Running jobs on Puhti<a class="headerlink" href="#running-jobs-on-puhti" title="Permalink to this heading"></a></h2>
+<p>When requesting GPU nodes on Puhti, a number of CPUs and GPUs are
+requested. The SLURM job scheduler is capable of quite complex
+assignments, but today we’ll keep it simple and focus solely on jobs
+that have one or more GPUs and matching groups of 10 CPU cores.</p>
+<p>For example (adapted from
+<a class="reference external" href="https://docs.csc.fi/computing/running/example-job-scripts-puhti/#single-gpu">https://docs.csc.fi/computing/running/example-job-scripts-puhti/#single-gpu</a>)
+to get a single GPU, 10 nearby CPU cores and some memory for 20
+minutes using the project for this workshop, we could use a job script
+like</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+
+<span class="c1">#SBATCH --time=00:15:00</span>
+<span class="c1">#SBATCH --partition=gpu</span>
+<span class="c1">#SBATCH --ntasks=1</span>
+<span class="c1">#SBATCH --cpus-per-task=10</span>
+<span class="c1">#SBATCH --gres=gpu:v100:1</span>
+<span class="c1">#SBATCH --account=project_2003752</span>
+<span class="c1">#SBATCH --reservation=gmx3</span>
+
+module<span class="w"> </span>purge
+module<span class="w"> </span>load<span class="w"> </span>gromacs-env/2021-gpu
+<span class="nb">export</span><span class="w"> </span><span class="nv">OMP_NUM_THREADS</span><span class="o">=</span><span class="nv">$SLURM_CPUS_PER_TASK</span>
+
+srun<span class="w"> </span>gmx_mpi<span class="w"> </span>mdrun
+</pre></div>
+</div>
+<p>If that was in a file <code class="docutils literal notranslate"><span class="pre">run-script.sh</span></code> then we can submit it to the
+Puhti batch queue with <code class="docutils literal notranslate"><span class="pre">sbatch</span> <span class="pre">run-script.sh</span></code>. For this workshop,
+that will start quickly because we have a dedicated reservation.</p>
+</section>
+<section id="see-also">
+<h2>See also<a class="headerlink" href="#see-also" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p><a class="reference external" href="https://docs.csc.fi/computing/running/getting-started/">https://docs.csc.fi/computing/running/getting-started/</a></p></li>
+</ul>
+<div class="admonition-keypoints keypoints admonition" id="keypoints-0">
+<p class="admonition-title">Keypoints</p>
+<ul class="simple">
+<li><p>HPC nodes have internal structure that affects performance</p></li>
+<li><p>Expect to see many clusters that have multiple GPUs per node</p></li>
+</ul>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../introduction/" class="btn btn-neutral float-left" title="Introduction" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../cpu-runs/" class="btn btn-neutral float-right" title="Using CPUs efficiently" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, EuroCC National Competence Centre Sweden.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

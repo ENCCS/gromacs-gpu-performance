@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GROMACS GPU performance &mdash; GROMACS GPU Performance</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" type="text/css" />
+      <link rel="stylesheet" href="_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="_static/togglebutton.css" type="text/css" />
+      <link rel="stylesheet" href="_static/sphinx_lesson.css" type="text/css" />
+      <link rel="stylesheet" href="_static/sphinx_rtd_theme_ext_color_contrast.css" type="text/css" />
+      <link rel="stylesheet" href="_static/tabs.css" type="text/css" />
+    <link rel="shortcut icon" href="_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="#" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/sphinx_highlight.js"></script>
+        <script src="_static/clipboard.min.js"></script>
+        <script src="_static/copybutton.js"></script>
+        <script src="_static/minipres.js"></script>
+        <script>let toggleHintShow = 'Click to show';</script>
+        <script>let toggleHintHide = 'Click to hide';</script>
+        <script>let toggleOpenOnPrint = 'true';</script>
+        <script src="_static/togglebutton.js"></script>
+        <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+        <script data-domain="enccs.github.io/gromacs-gpu-performance" defer="defer" src="https://plausible.io/js/script.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex/" />
+    <link rel="search" title="Search" href="search/" />
+    <link rel="next" title="Introduction" href="introduction/" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            GROMACS GPU Performance
+              <img src="_static/ENCCS.jpg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search/" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">The lesson</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="introduction/">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="puhti/">Understanding Puhti GPU nodes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cpu-runs/">Using CPUs efficiently</a></li>
+<li class="toctree-l1"><a class="reference internal" href="md-algorithm/">Getting performance from the MD algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="using-pme/">Performant PME simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="multi-gpu/">Using multiple GPUs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="general-considerations/">General considerations for performance</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quick-reference/">Quick Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide/">Instructor’s guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">GROMACS GPU Performance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">GROMACS GPU performance</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/ENCCS/gromacs-gpu-performance/blob/master/content/index.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="gromacs-gpu-performance">
+<h1>GROMACS GPU performance<a class="headerlink" href="#gromacs-gpu-performance" title="Permalink to this heading"></a></h1>
+<p>In this workshop, we will examine how GROMACS uses GPUs and
+how you as a user can get the best value from that.</p>
+<div class="admonition-prerequisites prerequisites admonition" id="prerequisites-0">
+<p class="admonition-title">Prerequisites</p>
+<p>Experience running production simulations with GROMACS. General
+concepts will be introduced with brief descriptions that should be
+familiar to experienced MD users. Links to the GROMACS
+documentation will be used frequently.</p>
+</div>
+<table class="docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p>20 min</p></td>
+<td><p><a class="reference internal" href="introduction/"><span class="doc">Introduction</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p>20 min</p></td>
+<td><p><a class="reference internal" href="puhti/"><span class="doc">Understanding Puhti GPU nodes</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>40 min</p></td>
+<td><p><a class="reference internal" href="md-algorithm/"><span class="doc">Getting performance from the MD algorithm</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p>50 min</p></td>
+<td><p><a class="reference internal" href="using-pme/"><span class="doc">Performant PME simulations</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>15 min</p></td>
+<td><p><a class="reference internal" href="general-considerations/"><span class="doc">General considerations for performance</span></a></p></td>
+</tr>
+</tbody>
+</table>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="quick-reference/">Quick Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide/">Instructor’s guide</a></li>
+</ul>
+</div>
+<section id="who-is-the-course-for">
+<span id="learner-personas"></span><h2>Who is the course for?<a class="headerlink" href="#who-is-the-course-for" title="Permalink to this heading"></a></h2>
+<p>This material is targeted towards researchers who already have
+experience with GROMACS and who would like to learn how to improve
+simulation performance when running on GPUs.</p>
+</section>
+<section id="about-the-course">
+<h2>About the course<a class="headerlink" href="#about-the-course" title="Permalink to this heading"></a></h2>
+<p>This lesson material is developed by the <a class="reference external" href="https://enccs.se/">EuroCC National Competence
+Center Sweden (ENCCS)</a> and taught in ENCCS
+workshops. It is aimed at researchers and developers who already have
+production experience with GROMACS. Each lesson episode has clearly defined learning
+objectives and includes multiple exercises along with solutions, and
+is therefore also useful for self-learning.
+The lesson material is licensed under <a class="reference external" href="https://creativecommons.org/licenses/by/4.0/">CC-BY-4.0</a> and can be reused in any form
+(with appropriate credit) in other courses and workshops.
+Instructors who wish to teach this lesson can refer to the <a class="reference internal" href="guide/"><span class="doc">Instructor’s guide</span></a> for
+practical advice.</p>
+</section>
+<section id="related-material">
+<h2>Related material<a class="headerlink" href="#related-material" title="Permalink to this heading"></a></h2>
+<p>BioExcel webinars on performant simulations with GROMACS</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://bioexcel.eu/webinar-performance-tuning-and-optimization-of-gromacs/">https://bioexcel.eu/webinar-performance-tuning-and-optimization-of-gromacs/</a> (based on GROMACS 2016)</p></li>
+<li><p><a class="reference external" href="https://bioexcel.eu/webinar-more-bang-for-your-buck-improved-use-of-gpu-nodes-for-gromacs-2018-2019-09-05/">https://bioexcel.eu/webinar-more-bang-for-your-buck-improved-use-of-gpu-nodes-for-gromacs-2018-2019-09-05/</a></p></li>
+<li><p><a class="reference external" href="https://bioexcel.eu/webinar-6-best-bang-for-your-buck-optimizing-cluster-and-simulation-setup-for-gromacs-7-september-2016/">https://bioexcel.eu/webinar-6-best-bang-for-your-buck-optimizing-cluster-and-simulation-setup-for-gromacs-7-september-2016/</a></p></li>
+<li><p><a class="reference external" href="https://bioexcel.eu/webinar-mdbenchmark-a-tedious-task-made-straightforward-2018-11-23/">https://bioexcel.eu/webinar-mdbenchmark-a-tedious-task-made-straightforward-2018-11-23/</a></p></li>
+</ul>
+<p>Publications with useful information for fast GROMACS simulations</p>
+<ul class="simple">
+<li><p>“Heterogeneous parallelization and acceleration of molecular dynamics simulations in GROMACS” <a class="reference external" href="https://doi.org/10.1063/5.0018516">https://doi.org/10.1063/5.0018516</a></p></li>
+<li><p>“More bang for your buck: Improved use of GPU nodes for GROMACS 2018” <a class="reference external" href="https://doi.org/10.1002/jcc.26011">https://doi.org/10.1002/jcc.26011</a></p></li>
+<li><p>“Best bang for your buck: GPU nodes for GROMACS biomolecular simulations” <a class="reference external" href="https://doi.org/10.1002/jcc.24030">https://doi.org/10.1002/jcc.24030</a></p></li>
+</ul>
+</section>
+<section id="credits">
+<h2>Credits<a class="headerlink" href="#credits" title="Permalink to this heading"></a></h2>
+<p>The lesson file structure and browsing layout is inspired by and derived from
+<a class="reference external" href="https://github.com/coderefinery/sphinx-lesson">work</a> by <a class="reference external" href="https://coderefinery.org/">CodeRefinery</a> licensed under the <a class="reference external" href="http://opensource.org/licenses/mit-license.html">MIT license</a>. We have copied and adapted
+most of their license text.</p>
+<section id="instructional-material">
+<h3>Instructional Material<a class="headerlink" href="#instructional-material" title="Permalink to this heading"></a></h3>
+<p>All ENCCS instructional material is made available under the <a class="reference external" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons
+Attribution license (CC-BY-4.0)</a>. The following is a
+human-readable summary of (and not a substitute for) the <a class="reference external" href="https://creativecommons.org/licenses/by/4.0/legalcode">full legal text of the
+CC-BY-4.0 license</a>.
+You are free:</p>
+<ul class="simple">
+<li><p>to <strong>share</strong> - copy and redistribute the material in any medium or format</p></li>
+<li><p>to <strong>adapt</strong> - remix, transform, and build upon the material for any purpose,
+even commercially.</p></li>
+</ul>
+<p>The licensor cannot revoke these freedoms as long as you follow these license terms:</p>
+<ul class="simple">
+<li><p><strong>Attribution</strong> - You must give appropriate credit (mentioning that your work
+is derived from work that is Copyright (c) ENCCS and, where practical, linking
+to <a class="reference external" href="https://enccs.se">https://enccs.se</a>), provide a <a class="reference external" href="https://creativecommons.org/licenses/by/4.0/">link to the license</a>, and indicate if changes were
+made. You may do so in any reasonable manner, but not in any way that suggests
+the licensor endorses you or your use.</p></li>
+<li><p><strong>No additional restrictions</strong> - You may not apply legal terms or
+technological measures that legally restrict others from doing anything the
+license permits. With the understanding that:</p>
+<ul>
+<li><p>You do not have to comply with the license for elements of the material in
+the public domain or where your use is permitted by an applicable exception
+or limitation.</p></li>
+<li><p>No warranties are given. The license may not give you all of the permissions
+necessary for your intended use. For example, other rights such as
+publicity, privacy, or moral rights may limit how you use the material.</p></li>
+</ul>
+</li>
+</ul>
+</section>
+<section id="software">
+<h3>Software<a class="headerlink" href="#software" title="Permalink to this heading"></a></h3>
+<p>Except where otherwise noted, the example programs and other software provided
+by ENCCS are made available under the <a class="reference external" href="http://opensource.org/">OSI</a>-approved
+<a class="reference external" href="http://opensource.org/licenses/mit-license.html">MIT license</a>.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="introduction/" class="btn btn-neutral float-right" title="Introduction" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, EuroCC National Competence Centre Sweden.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

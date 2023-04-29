@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>General considerations for performance &mdash; GROMACS GPU Performance</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/togglebutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sphinx_lesson.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sphinx_rtd_theme_ext_color_contrast.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/tabs.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script src="../_static/minipres.js"></script>
+        <script>let toggleHintShow = 'Click to show';</script>
+        <script>let toggleHintHide = 'Click to hide';</script>
+        <script>let toggleOpenOnPrint = 'true';</script>
+        <script src="../_static/togglebutton.js"></script>
+        <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+        <script data-domain="enccs.github.io/gromacs-gpu-performance" defer="defer" src="https://plausible.io/js/script.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex/" />
+    <link rel="search" title="Search" href="../search/" />
+    <link rel="next" title="Quick Reference" href="../quick-reference/" />
+    <link rel="prev" title="Using multiple GPUs" href="../multi-gpu/" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../" class="icon icon-home">
+            GROMACS GPU Performance
+              <img src="../_static/ENCCS.jpg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search/" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">The lesson</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction/">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../puhti/">Understanding Puhti GPU nodes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cpu-runs/">Using CPUs efficiently</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../md-algorithm/">Getting performance from the MD algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using-pme/">Performant PME simulations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../multi-gpu/">Using multiple GPUs</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">General considerations for performance</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#designing-an-efficient-simulation">Designing an efficient simulation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#do-you-need-speed-or-throughput">Do you need speed or throughput?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#see-also">See also</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../quick-reference/">Quick Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/">Instructor’s guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../">GROMACS GPU Performance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">General considerations for performance</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/ENCCS/gromacs-gpu-performance/blob/master/content/general-considerations.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="general-considerations-for-performance">
+<h1>General considerations for performance<a class="headerlink" href="#general-considerations-for-performance" title="Permalink to this heading"></a></h1>
+<div class="admonition-questions questions admonition" id="questions-0">
+<p class="admonition-title">Questions</p>
+<ul class="simple">
+<li><p>What things should I think about while setting up each simulation?</p></li>
+</ul>
+</div>
+<div class="admonition-objectives objectives admonition" id="objectives-0">
+<p class="admonition-title">Objectives</p>
+<ul class="simple">
+<li><p>Know common pitfalls to avoid</p></li>
+</ul>
+</div>
+<section id="designing-an-efficient-simulation">
+<h2>Designing an efficient simulation<a class="headerlink" href="#designing-an-efficient-simulation" title="Permalink to this heading"></a></h2>
+<p>Here’s a short list of things to consider when designing your
+simulations, so that you will run efficiently.</p>
+<ul class="simple">
+<li><p>Choose a simulation cell that is the right shape, just large enough for your science and your physical model</p></li>
+<li><p>Otherwise, use LINCS and h-bonds constraints and 2 fs time steps</p></li>
+<li><p>Be aware that typical water models are designed to be rigid</p></li>
+<li><p>Use fast 3-site water models unless there’s a clear scientific reason</p></li>
+<li><p>If your simulation has layers, align them to the X-Y plane, so that
+the automatic load balancing division along the Z axis works well</p></li>
+<li><p>If your simulation cell has some dimensions much shorter than the others,
+choose the short one(s) to be X and Y for the same reason as above.</p></li>
+<li><p>Write only the output you know you will use - if you don’t know what output
+you will use, don’t run a simulation yet!</p></li>
+<li><p>Write the output you need with a period that makes sense - no shorter
+than its autocorrelation time.</p></li>
+<li><p>Don’t run your production simulation with energy output groups on -
+if you need that later, it’s much more efficient to use <code class="docutils literal notranslate"><span class="pre">gmx</span> <span class="pre">mdrun</span> <span class="pre">-rerun</span></code></p></li>
+<li><p>Don’t use temperature or pressuring coupling every step</p></li>
+<li><p>Choose <code class="docutils literal notranslate"><span class="pre">nst*</span></code> parameters to have a large common factor, like 10 or 100</p></li>
+<li><p>Use h-bond constraints and a timestep around 2 fs</p></li>
+</ul>
+</section>
+<section id="do-you-need-speed-or-throughput">
+<h2>Do you need speed or throughput?<a class="headerlink" href="#do-you-need-speed-or-throughput" title="Permalink to this heading"></a></h2>
+<p>Sometimes you simply need one trajectory to run as fast as
+possible. But often one’s scientific goals are best met by running
+several similar trajectories. Perhaps even the same system
+equilibrated from different starting velocities. If aggregate sampling
+across multiple trajectories is what you need, then multi-simulations
+can be very efficient.</p>
+<p>These exploit the fact that the two trajectories are themselves
+concurrent. When running a single trajectory, the GPU is idle when the
+update and constraints run on the GPU. However if two trajectories
+run, sharing the same GPU, then they will settle in a pattern running
+mutually “out of phase” with each other. While one trajectory is doing
+the update on the CPU, the other is computing its forces on the
+GPU. Neither trajectory will be as fast as if they had the resources
+to themselves, but the overall sampling rate will be much higher than
+the single trajectory.</p>
+<figure class="align-center" id="id1">
+<img alt="../_images/multisim-workflow-sharing-gpu.svg" src="../_images/multisim-workflow-sharing-gpu.svg" /><figcaption>
+<p><span class="caption-text">Sharing the GPU between two trajectories. While one trajectory is
+doing the update phase on the CPU, the other trajectory will use
+the GPU, which would otherwise lie idle. This maximizes resource
+utilization. Each trajectory needs its own (dedicated) CPU
+cores. It might be best to only offload the short-range work to the
+GPU, do experiment!</span><a class="headerlink" href="#id1" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>This possiblity exists only because there are resources that remain
+idle that can be used in parallel between two trajectories. Thus there
+is no advantage from sharing more than two trajectories per GPU, and
+no such advantage where there is no GPU in use.</p>
+<p>It is possible to do this manually with <code class="docutils literal notranslate"><span class="pre">gmx</span> <span class="pre">mdrun</span></code> if you take care
+to give each trajectory its own CPU cores and share the GPU. However,
+the multi-simulation feature in <code class="docutils literal notranslate"><span class="pre">gmx_mpi</span> <span class="pre">mdrun</span> <span class="pre">-multidir</span></code> will take
+care of these details for you. For example, for four trajectories, each
+with one rank, on a single node with two GPUs, consider using</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">mpirun</span> <span class="o">-</span><span class="n">np</span> <span class="mi">4</span> <span class="n">gmx_mpi</span> <span class="n">mdrun</span> <span class="o">-</span><span class="n">multidir</span> <span class="n">A</span><span class="o">/</span> <span class="n">B</span><span class="o">/</span> <span class="n">C</span><span class="o">/</span> <span class="n">D</span><span class="o">/</span>
+</pre></div>
+</div>
+<p>which will share GPU #0 between A and B and GPU #1 between C and D.</p>
+</section>
+<section id="see-also">
+<h2>See also<a class="headerlink" href="#see-also" title="Permalink to this heading"></a></h2>
+<p>This paper “Heterogeneous parallelization and acceleration of molecular dynamics simulations in GROMACS”
+<a class="reference external" href="https://doi.org/10.1063/5.0018516">https://doi.org/10.1063/5.0018516</a> (or <a class="reference external" href="https://arxiv.org/abs/2006.09167">https://arxiv.org/abs/2006.09167</a>) has useful information.</p>
+<p>These papers explore multi-simulations for throughput in detail:</p>
+<ul class="simple">
+<li><p>“More bang for your buck: Improved use of GPU nodes for GROMACS 2018” <a class="reference external" href="https://doi.org/10.1002/jcc.26011">https://doi.org/10.1002/jcc.26011</a></p></li>
+<li><p>“Best bang for your buck: GPU nodes for GROMACS biomolecular simulations” <a class="reference external" href="https://doi.org/10.1002/jcc.24030">https://doi.org/10.1002/jcc.24030</a></p></li>
+</ul>
+<div class="admonition-keypoints keypoints admonition" id="keypoints-0">
+<p class="admonition-title">Keypoints</p>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">mdrun</span></code> implementation is not fully general, some things run faster than others</p></li>
+</ul>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../multi-gpu/" class="btn btn-neutral float-left" title="Using multiple GPUs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../quick-reference/" class="btn btn-neutral float-right" title="Quick Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, EuroCC National Competence Centre Sweden.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

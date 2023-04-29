@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Using multiple GPUs &mdash; GROMACS GPU Performance</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/togglebutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sphinx_lesson.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sphinx_rtd_theme_ext_color_contrast.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/tabs.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script src="../_static/minipres.js"></script>
+        <script>let toggleHintShow = 'Click to show';</script>
+        <script>let toggleHintHide = 'Click to hide';</script>
+        <script>let toggleOpenOnPrint = 'true';</script>
+        <script src="../_static/togglebutton.js"></script>
+        <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+        <script data-domain="enccs.github.io/gromacs-gpu-performance" defer="defer" src="https://plausible.io/js/script.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex/" />
+    <link rel="search" title="Search" href="../search/" />
+    <link rel="next" title="General considerations for performance" href="../general-considerations/" />
+    <link rel="prev" title="Performant PME simulations" href="../using-pme/" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../" class="icon icon-home">
+            GROMACS GPU Performance
+              <img src="../_static/ENCCS.jpg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search/" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">The lesson</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction/">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../puhti/">Understanding Puhti GPU nodes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cpu-runs/">Using CPUs efficiently</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../md-algorithm/">Getting performance from the MD algorithm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../using-pme/">Performant PME simulations</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Using multiple GPUs</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#nodes-with-several-gpus">Nodes with several GPUs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#using-direct-communications-between-gpus">Using direct communications between GPUs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#the-most-efficient-way-to-use-multi-gpu-systems">The most efficient way to use multi-GPU systems</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../general-considerations/">General considerations for performance</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../quick-reference/">Quick Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/">Instructor’s guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../">GROMACS GPU Performance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Using multiple GPUs</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/ENCCS/gromacs-gpu-performance/blob/master/content/multi-gpu.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="using-multiple-gpus">
+<h1>Using multiple GPUs<a class="headerlink" href="#using-multiple-gpus" title="Permalink to this heading"></a></h1>
+<div class="admonition-questions questions admonition" id="questions-0">
+<p class="admonition-title">Questions</p>
+<ul class="simple">
+<li><p>How one can get more performance with more than one GPU?</p></li>
+</ul>
+</div>
+<div class="admonition-objectives objectives admonition" id="objectives-0">
+<p class="admonition-title">Objectives</p>
+<ul class="simple">
+<li><p>Know how to use several GPUs efficiently.</p></li>
+</ul>
+</div>
+<section id="nodes-with-several-gpus">
+<h2>Nodes with several GPUs<a class="headerlink" href="#nodes-with-several-gpus" title="Permalink to this heading"></a></h2>
+<p>It is common to have more than one GPU in a single node.
+To use them, we can leverage the domain decomposition machinery.
+Indeed, it is already set up so that the communications between ranks are minimal.
+So the GPUs will be assigned to ranks and do all the computations for a single domain.</p>
+<div class="admonition-run-simulation-on-two-gpus-simultaneously exercise important admonition" id="exercise-0">
+<p class="admonition-title">Run simulation on two GPUs simultaneously</p>
+<p>Make a new folder for this exercise, e.g. <code class="docutils literal notranslate"><span class="pre">mkdir</span>
+<span class="pre">using-pme-multigpu;</span> <span class="pre">cd</span> <span class="pre">using-pme-multigpu</span></code>.</p>
+<p><a class="reference download internal" download="" href="../_downloads/adc3285eded37b305e282b7c7e94ce8c/topol.tpr"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">the</span> <span class="pre">run</span> <span class="pre">input</span> <span class="pre">file</span></code></a> prepared to do 20000
+steps of a PME simulation. We’ll use it to experiment with task
+assignment.</p>
+<p><a class="reference download internal" download="" href="../_downloads/c3660852b1983a6fe7113970fd2c1e7b/many-gpus.sh"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">the</span> <span class="pre">job</span> <span class="pre">submission</span> <span class="pre">script</span></code></a> where you will see
+several lines marked <code class="docutils literal notranslate"><span class="pre">**FIXME**</span></code>. Remove the <code class="docutils literal notranslate"><span class="pre">**FIXME**</span></code> to
+achieve the goal stated in the comment before that line. You will
+need to refer to the information above to achieve that. Save the
+file and exit.</p>
+<p>Submit the script to the SLURM job manager with <code class="docutils literal notranslate"><span class="pre">sbatch</span>
+<span class="pre">many-gpus.sh</span></code>. It will reply something like <code class="docutils literal notranslate"><span class="pre">Submitted</span> <span class="pre">batch</span> <span class="pre">job</span>
+<span class="pre">4565494</span></code> when it succeeded. The job manager will write terminal
+output to a file named like <code class="docutils literal notranslate"><span class="pre">slurm-4565494.out</span></code>. It may take a
+few minutes to start and a few more minutes to run.</p>
+<p>While it is running, you can use <code class="docutils literal notranslate"><span class="pre">tail</span> <span class="pre">-f</span> <span class="pre">slurm*out</span></code> to watch the
+output. When it says “Done” then the runs are finished. Use Ctrl-C
+to exit the <code class="docutils literal notranslate"><span class="pre">tail</span></code> command that you ran.</p>
+<p>Once the first trajectory completes, exit <code class="docutils literal notranslate"><span class="pre">tail</span></code> and use <code class="docutils literal notranslate"><span class="pre">less</span>
+<span class="pre">default.log</span></code> to inspect the output. Find the “Mapping of GPU
+IDs…” Does what you read there agree with what you just learned?</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">*.log</span></code> files contain the performance (in ns/day) of each run
+on the last line. Use <code class="docutils literal notranslate"><span class="pre">tail</span> <span class="pre">*log</span></code> to see the last chunk of each
+log file. Have a look through the log files and see what you can
+learn. What differs from log files from previous exercises? What is
+the performance gain when compared to a single GPU?</p>
+</div>
+<div class="admonition-solution solution important dropdown admonition" id="solution-0">
+<p class="admonition-title">Solution</p>
+<p>You can download a <a class="reference download internal" download="" href="../_downloads/a251c12d3e8174b740304d37e330ed8a/many-gpus.sh"><code class="xref download docutils literal notranslate"><span class="pre">working</span> <span class="pre">version</span></code></a> of the batch
+submission script. Its diff from the original is file</p>
+<div class="highlight-udiff notranslate"><div class="highlight"><pre><span></span><span class="gd">--- /home/runner/work/gromacs-gpu-performance/gromacs-gpu-performance/content/exercises/using-pme/many-gpus.sh</span>
+<span class="gi">+++ /home/runner/work/gromacs-gpu-performance/gromacs-gpu-performance/content/answers/using-pme/many-gpus.sh</span>
+<span class="gu">@@ -2,9 +2,9 @@</span>
+<span class="w"> </span>
+<span class="w"> </span>#SBATCH --time=00:15:00
+<span class="w"> </span>#SBATCH --partition=gpu
+<span class="gd">-#SBATCH --ntasks=**FIXME**</span>
+<span class="gi">+#SBATCH --ntasks=2</span>
+<span class="w"> </span>#SBATCH --cpus-per-task=10
+<span class="gd">-#SBATCH --gres=gpu:v100:**FIXME**</span>
+<span class="gi">+#SBATCH --gres=gpu:v100:2</span>
+<span class="w"> </span>#SBATCH --account=project_2003752
+<span class="w"> </span>#SBATCH --reservation=gmx3
+<span class="w"> </span>
+<span class="gu">@@ -16,10 +16,10 @@</span>
+<span class="w"> </span>options=&quot;-nsteps 20000 -resetstep 19000 -ntomp $SLURM_CPUS_PER_TASK -pin on -pinstride 1&quot;
+<span class="w"> </span>
+<span class="w"> </span># Run mdrun assigning the non-bonded, PME, and update work to the GPU
+<span class="gd">-srun gmx mdrun $options -g manual-nb-pme-update.log        **FIXME**</span>
+<span class="gi">+srun gmx mdrun $options -g manual-nb-pme-update.log        -nb gpu -pme gpu             -update gpu</span>
+<span class="w"> </span># Run mdrun assigning the non-bonded, PME, bonded, and update
+<span class="w"> </span># work to the GPU
+<span class="gd">-srun gmx mdrun $options -g manual-nb-pme-bonded-update.log **FIXME**</span>
+<span class="gi">+srun gmx mdrun $options -g manual-nb-pme-bonded-update.log -nb gpu -pme gpu -bonded gpu -update gpu</span>
+<span class="w"> </span>
+<span class="w"> </span># Let us know we&#39;re done
+<span class="w"> </span>echo Done
+</pre></div>
+</div>
+</div>
+</section>
+<section id="using-direct-communications-between-gpus">
+<h2>Using direct communications between GPUs<a class="headerlink" href="#using-direct-communications-between-gpus" title="Permalink to this heading"></a></h2>
+<p>On Puhti, GPUs are connected with NVLink. This allows them to communicate directly.
+This can be explored in GROMACS, although this feature is not tested that carefully.
+So use cautiously and report your experience to GROMACS developers! To enable, one
+needs to set two environment variables: <code class="docutils literal notranslate"><span class="pre">GMX_GPU_DD_COMMS</span></code> and <code class="docutils literal notranslate"><span class="pre">GMX_GPU_PME_PP_COMMS</span></code>.
+The first will enable halo exchange between domains, the second one will allow PP and PME
+ranks to communicate directly.</p>
+<div class="admonition-run-simulation-on-two-gpus-simultaneously exercise important admonition" id="exercise-1">
+<p class="admonition-title">Run simulation on two GPUs simultaneously</p>
+<p><a class="reference download internal" download="" href="../_downloads/c4a8ae0f65e603da97b5b26b423b72af/many-gpus-direct-comms.sh"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">the</span> <span class="pre">job</span> <span class="pre">submission</span> <span class="pre">script</span></code></a> where you will see
+several lines marked <code class="docutils literal notranslate"><span class="pre">**FIXME**</span></code>. Remove the <code class="docutils literal notranslate"><span class="pre">**FIXME**</span></code> to
+achieve the goal stated in the comment before that line. You will
+need to refer to the information above to achieve that. Save the
+file and exit.</p>
+<p>Submit the script to the SLURM job manager with <code class="docutils literal notranslate"><span class="pre">sbatch</span>
+<span class="pre">many-gpus_direct-comms.sh</span></code>. It will reply something like <code class="docutils literal notranslate"><span class="pre">Submitted</span> <span class="pre">batch</span> <span class="pre">job</span>
+<span class="pre">4565494</span></code> when it succeeded. The job manager will write terminal
+output to a file named like <code class="docutils literal notranslate"><span class="pre">slurm-4565494.out</span></code>. It may take a
+few minutes to start and a few more minutes to run.</p>
+<p>While it is running, you can use <code class="docutils literal notranslate"><span class="pre">tail</span> <span class="pre">-f</span> <span class="pre">slurm*out</span></code> to watch the
+output. When it says “Done” then the runs are finished. Use Ctrl-C
+to exit the <code class="docutils literal notranslate"><span class="pre">tail</span></code> command that you ran.</p>
+<p>Once the first trajectory completes, exit <code class="docutils literal notranslate"><span class="pre">tail</span></code> and use <code class="docutils literal notranslate"><span class="pre">less</span>
+<span class="pre">default.log</span></code> to inspect the output. Find the “Mapping of GPU
+IDs…” Does what you read there agree with what you just learned?</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">*.log</span></code> files contain the performance (in ns/day) of each run
+on the last line. Use <code class="docutils literal notranslate"><span class="pre">tail</span> <span class="pre">*log</span></code> to see the last chunk of each
+log file. Have a look through the log files and see what you can
+learn. What differs from log files from previous exercises? What is
+the performance gain when compared to a single GPU?</p>
+</div>
+<div class="admonition-solution solution important dropdown admonition" id="solution-1">
+<p class="admonition-title">Solution</p>
+<p>You can download a <a class="reference download internal" download="" href="../_downloads/d681b060e04037ca900af00c406b983d/many-gpus-direct-comms.sh"><code class="xref download docutils literal notranslate"><span class="pre">working</span> <span class="pre">version</span></code></a> of the batch
+submission script. Its diff from the original is file</p>
+<div class="highlight-udiff notranslate"><div class="highlight"><pre><span></span><span class="gd">--- /home/runner/work/gromacs-gpu-performance/gromacs-gpu-performance/content/exercises/using-pme/many-gpus-direct-comms.sh</span>
+<span class="gi">+++ /home/runner/work/gromacs-gpu-performance/gromacs-gpu-performance/content/answers/using-pme/many-gpus-direct-comms.sh</span>
+<span class="gu">@@ -11,17 +11,17 @@</span>
+<span class="w"> </span>module purge
+<span class="w"> </span>module load gromacs-env/2021-gpu
+<span class="w"> </span>export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
+<span class="gd">-</span>
+<span class="gd">-**FIXME**: set GMX_GPU_DD_COMMS and GMX_GPU_PME_PP_COMMS environment variables</span>
+<span class="gi">+export GMX_GPU_DD_COMMS=1</span>
+<span class="gi">+export GMX_GPU_PME_PP_COMMS=1</span>
+<span class="w"> </span>
+<span class="w"> </span># Make sure we don&#39;t spend time writing useless output
+<span class="w"> </span>options=&quot;-nsteps 20000 -resetstep 19000 -ntomp $SLURM_CPUS_PER_TASK -pin on -pinstride 1&quot;
+<span class="w"> </span>
+<span class="w"> </span># Run mdrun assigning the non-bonded, PME, and update work to the GPU
+<span class="gd">-srun gmx mdrun $options -g manual-nb-pme-update.log        **FIXME**</span>
+<span class="gi">+srun gmx mdrun $options -g manual-nb-pme-update.log        -nb gpu -pme gpu             -update gpu</span>
+<span class="w"> </span># Run mdrun assigning the non-bonded, PME, bonded, and update
+<span class="w"> </span># work to the GPU
+<span class="gd">-srun gmx mdrun $options -g manual-nb-pme-bonded-update.log **FIXME**</span>
+<span class="gi">+srun gmx mdrun $options -g manual-nb-pme-bonded-update.log -nb gpu -pme gpu -bonded gpu -update gpu</span>
+<span class="w"> </span>
+<span class="w"> </span># Let us know we&#39;re done
+<span class="w"> </span>echo Done
+</pre></div>
+</div>
+</div>
+</section>
+<section id="the-most-efficient-way-to-use-multi-gpu-systems">
+<h2>The most efficient way to use multi-GPU systems<a class="headerlink" href="#the-most-efficient-way-to-use-multi-gpu-systems" title="Permalink to this heading"></a></h2>
+<p>As before, the scaling when going from one GPU to two is not linear.
+This is expected: GPUs now don’t have as much to compute and they have to communicate
+between each other. To add to that, the communications can not be easily hidden behind
+the computations. To make the best use of the resources, ensemble runs can be executed.
+Try to use multi-dir approach as we did before, to see what configuration will give you the
+best cumulative performance. Try to assign more than one rank to a single GPU. This will
+allow to overlap communications, CPU and GPU execution more efficiently. Try to leave bonded
+computation and/or update constraints to the CPU: you have 10 CPU core per single GPU and it
+would be a waste to keep them idle.</p>
+<div class="admonition-keypoints keypoints admonition" id="keypoints-0">
+<p class="admonition-title">Keypoints</p>
+<ul class="simple">
+<li><p>One can use several GPUs for a single run.</p></li>
+<li><p>Ensemble runs allow to overlap communications with computations thus using the resources more efficiently.</p></li>
+</ul>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../using-pme/" class="btn btn-neutral float-left" title="Performant PME simulations" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../general-considerations/" class="btn btn-neutral float-right" title="General considerations for performance" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, EuroCC National Competence Centre Sweden.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

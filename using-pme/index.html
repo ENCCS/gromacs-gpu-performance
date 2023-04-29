@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Performant PME simulations &mdash; GROMACS GPU Performance</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/copybutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/togglebutton.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sphinx_lesson.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/sphinx_rtd_theme_ext_color_contrast.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/tabs.css" type="text/css" />
+    <link rel="shortcut icon" href="../_static/favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script src="../_static/clipboard.min.js"></script>
+        <script src="../_static/copybutton.js"></script>
+        <script src="../_static/minipres.js"></script>
+        <script>let toggleHintShow = 'Click to show';</script>
+        <script>let toggleHintHide = 'Click to hide';</script>
+        <script>let toggleOpenOnPrint = 'true';</script>
+        <script src="../_static/togglebutton.js"></script>
+        <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        <script data-domain="enccs.github.io/gromacs-gpu-performance" defer="defer" src="https://plausible.io/js/script.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex/" />
+    <link rel="search" title="Search" href="../search/" />
+    <link rel="next" title="Using multiple GPUs" href="../multi-gpu/" />
+    <link rel="prev" title="Getting performance from the MD algorithm" href="../md-algorithm/" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../" class="icon icon-home">
+            GROMACS GPU Performance
+              <img src="../_static/ENCCS.jpg" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search/" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">The lesson</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../introduction/">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../puhti/">Understanding Puhti GPU nodes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../cpu-runs/">Using CPUs efficiently</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../md-algorithm/">Getting performance from the MD algorithm</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Performant PME simulations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#background-on-the-pme-algorithm">Background on the PME algorithm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pme-tuning">PME tuning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#md-workflows-using-pme">MD workflows using PME</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#running-update-and-constraints-on-the-gpu">Running update and constraints on the GPU</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../multi-gpu/">Using multiple GPUs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../general-considerations/">General considerations for performance</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../quick-reference/">Quick Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../guide/">Instructor’s guide</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../">GROMACS GPU Performance</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Performant PME simulations</li>
+      <li class="wy-breadcrumbs-aside">
+              <a href="https://github.com/ENCCS/gromacs-gpu-performance/blob/master/content/using-pme.rst" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="performant-pme-simulations">
+<h1>Performant PME simulations<a class="headerlink" href="#performant-pme-simulations" title="Permalink to this heading"></a></h1>
+<div class="admonition-questions questions admonition" id="questions-0">
+<p class="admonition-title">Questions</p>
+<ul class="simple">
+<li><p>What considerations are important when using PME</p></li>
+</ul>
+</div>
+<div class="admonition-objectives objectives admonition" id="objectives-0">
+<p class="admonition-title">Objectives</p>
+<ul class="simple">
+<li><p>Know how to assign the PME workload</p></li>
+</ul>
+</div>
+<section id="background-on-the-pme-algorithm">
+<h2>Background on the PME algorithm<a class="headerlink" href="#background-on-the-pme-algorithm" title="Permalink to this heading"></a></h2>
+<p>Most systems of interest in biomolecular MD have inhomogeneous
+distributions of partially charged particles. It turns out that simply
+neglecting interactions beyond a cut-off is not accurate enough. Even
+extremely large cut-offs only reduce the size, not eliminate
+truncation artefacts. Instead, most turn to some form of the Ewald
+method, where the shape of the short-range interaction is modified,
+and a compensating fix is made by doing extra work in a concurrent
+long-range component.</p>
+<figure class="align-center" id="id1">
+<img alt="../_images/ewald-corrected-force.svg" src="../_images/ewald-corrected-force.svg" /><figcaption>
+<p><span class="caption-text">Decomposing the Coulomb interaction (blue) into short- and
+long-ranged contributions. A Gaussian potential is subtracted from
+the <span class="math notranslate nohighlight">\(\frac{1}{r}\)</span> Coulomb potential so that its forces (red)
+goes to zero at smaller <span class="math notranslate nohighlight">\(r\)</span>. That Gaussian is added back in
+the so-called long-range (“PME”) component (green) so that the full
+all-vs-all Coulomb interaction is modelled accurately. The
+advantage is that the long-range component is smoothly varying and
+can be efficiently computed with a 3D-FFT.</span><a class="headerlink" href="#id1" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>That concurrent force work can also be computed on the CPU or the GPU.
+When run on an Nvidia GPU, the CUFFT library is used to implement the
+3D-FFT part of the long-range component. When run on the CPU, a similar
+library is used, normally MIT’s FFTW or Intel’s MKL.</p>
+</section>
+<section id="pme-tuning">
+<h2>PME tuning<a class="headerlink" href="#pme-tuning" title="Permalink to this heading"></a></h2>
+<p>One of the most useful attributes of the PME algorithm is that the
+share of the computational work of the two components can be
+varying. Scaling the short-ranged cutoff and the 3D-FFT grid spacing
+by the same factor gives a model that is just as accurate an
+approximation, while reducing the workload of one and increasing the
+workload of the other. So the user input can be used to define the
+expected quality of the electrostatic approximation, and the actual
+implementation can do something equivalent that minimizes the total
+execution time.</p>
+<p>The PME tuning is on by default whenever it is likely to be useful,
+can be forced on with <code class="docutils literal notranslate"><span class="pre">gmx</span> <span class="pre">mdrun</span> <span class="pre">-tunepme</span></code>, and forced off with
+<code class="docutils literal notranslate"><span class="pre">gmx</span> <span class="pre">mdrun</span> <span class="pre">-notunepme</span></code>.  In practice, <code class="docutils literal notranslate"><span class="pre">mdrun</span></code> does such tuning in
+the first few thousand steps, and then uses the result of the
+optimization for the remaining time.</p>
+<div class="admonition-quiz-mdrun-also-has-to-compute-the-van-der-waals-interactions-between-particles-should-the-cutoff-for-those-be-changed-to-match-the-tuned-electrostatic-cutoff exercise important admonition" id="exercise-0">
+<p class="admonition-title">3.1 Quiz: mdrun also has to compute the van der Waals
+interactions between particles. Should the cutoff for those be changed
+to match the tuned electrostatic cutoff</p>
+<ol class="arabic simple">
+<li><p>Yes, keep it simple</p></li>
+<li><p>Yes, van der Waals interactions are not important</p></li>
+<li><p>No, they’re so cheap it doesn’t matter</p></li>
+<li><p>No, the van der Waals radii are critical for force-field accuracy</p></li>
+</ol>
+</div>
+<div class="admonition-solution solution important dropdown admonition" id="solution-0">
+<p class="admonition-title">Solution</p>
+<ol class="arabic simple" start="4">
+<li><p>Changing the van der Waals cutoff unbalances the force field,
+because the parameters for different interactions are optimized
+in context with each other. Even making it <em>longer</em> can upset
+the balance. So in the PME tuning, <code class="docutils literal notranslate"><span class="pre">mdrun</span></code> must preserve the
+cutoff for van der Waals. This means PME tuning to short
+electrostatic cutoffs is a less effective option, because the
+pair lists must always be large enough for the van der
+Waals. But typically that possibility was not interesting for
+performance anyway.</p></li>
+</ol>
+</div>
+</section>
+<section id="md-workflows-using-pme">
+<h2>MD workflows using PME<a class="headerlink" href="#md-workflows-using-pme" title="Permalink to this heading"></a></h2>
+<figure class="align-center" id="id2">
+<img alt="../_images/molecular-dynamics-workflow-on-cpu-and-one-gpu.svg" src="../_images/molecular-dynamics-workflow-on-cpu-and-one-gpu.svg" /><figcaption>
+<p><span class="caption-text">Typical GROMACS simulation running on a GPU, with only the short-ranged
+interactions offloaded to the GPU. This can be
+selected with <code class="docutils literal notranslate"><span class="pre">gmx</span> <span class="pre">mdrun</span> <span class="pre">-nb</span> <span class="pre">gpu</span> <span class="pre">-pme</span> <span class="pre">cpu</span> <span class="pre">-bonded</span> <span class="pre">cpu</span></code>.</span><a class="headerlink" href="#id2" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<div class="admonition-quiz-when-would-it-be-most-likely-to-benefit-from-moving-pme-interactions-to-the-gpu exercise important admonition" id="exercise-1">
+<p class="admonition-title">3.2 Quiz: When would it be most likely to benefit
+            from moving PME interactions to the GPU?</p>
+<ol class="arabic simple">
+<li><p>Few bonded interactions and relatively weak CPU</p></li>
+<li><p>Few bonded interactions and relatively strong CPU</p></li>
+<li><p>Many bonded interactions and relatively weak CPU</p></li>
+<li><p>Many bonded interactions and relatively strong CPU</p></li>
+</ol>
+</div>
+<div class="admonition-solution solution important dropdown admonition" id="solution-1">
+<p class="admonition-title">Solution</p>
+<ol class="arabic simple" start="3">
+<li><p>Running two tasks on the GPU again adds overhead there, and that
+offsets any benefit from speeding up the total work by running
+it on the GPU. If the CPU is powerful enough to finish all its
+work before the GPU finishes the short-ranged work, then
+leaving the PME work on the CPU is best.</p></li>
+</ol>
+</div>
+<p>The PME task can be moved to the same GPU as the short-ranged
+task. This comes with the same kinds of challenges as moving the
+bonded task to the GPU.</p>
+<figure class="align-center" id="id3">
+<img alt="../_images/molecular-dynamics-workflow-short-range-gpu-pme-gpu-bonded-cpu.svg" src="../_images/molecular-dynamics-workflow-short-range-gpu-pme-gpu-bonded-cpu.svg" /><figcaption>
+<p><span class="caption-text">Possible GROMACS simulation running on a GPU, with both
+short-ranged and PME tasks offloaded to the GPU. This can be
+selected with <code class="docutils literal notranslate"><span class="pre">gmx</span> <span class="pre">mdrun</span> <span class="pre">-nb</span> <span class="pre">gpu</span> <span class="pre">-pme</span> <span class="pre">gpu</span> <span class="pre">-bonded</span> <span class="pre">cpu</span></code>.</span><a class="headerlink" href="#id3" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>It turns out that the latter part of the PME task is harder to make
+run fast on a GPU than the first part, particularly when there is a
+short-ranged task also running on the same GPU. GROMACS permits that
+second part to be run on the CPU instead.</p>
+<figure class="align-center" id="id4">
+<img alt="../_images/molecular-dynamics-workflow-short-range-gpu-pme-gpu-pmefft-cpu-bonded-cpu.svg" src="../_images/molecular-dynamics-workflow-short-range-gpu-pme-gpu-pmefft-cpu-bonded-cpu.svg" /><figcaption>
+<p><span class="caption-text">Possible GROMACS simulation running on a GPU, with short-ranged and
+the first part of the PME task offloaded to the GPU. This can be
+selected with <code class="docutils literal notranslate"><span class="pre">gmx</span> <span class="pre">mdrun</span> <span class="pre">-nb</span> <span class="pre">gpu</span> <span class="pre">-pme</span> <span class="pre">gpu</span> <span class="pre">-pmefft</span> <span class="pre">cpu</span> <span class="pre">-bonded</span>
+<span class="pre">cpu</span></code>.</span><a class="headerlink" href="#id4" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<div class="admonition-explore-performance-with-pme exercise important admonition" id="exercise-2">
+<p class="admonition-title">Explore performance with PME</p>
+<p>Make a new folder for this exercise, e.g. <code class="docutils literal notranslate"><span class="pre">mkdir</span>
+<span class="pre">using-pme;</span> <span class="pre">cd</span> <span class="pre">using-pme</span></code>.</p>
+<p><a class="reference download internal" download="" href="../_downloads/adc3285eded37b305e282b7c7e94ce8c/topol.tpr"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">the</span> <span class="pre">run</span> <span class="pre">input</span> <span class="pre">file</span></code></a> prepared to do 20000
+steps of a PME simulation. We’ll use it to experiment with task
+assignment.</p>
+<p><a class="reference download internal" download="" href="../_downloads/70a5aac3e050ee456d08df0365527c68/script.sh"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">the</span> <span class="pre">job</span> <span class="pre">submission</span> <span class="pre">script</span></code></a> where you will see
+several lines marked <code class="docutils literal notranslate"><span class="pre">**FIXME**</span></code>. Remove the <code class="docutils literal notranslate"><span class="pre">**FIXME**</span></code> to
+achieve the goal stated in the comment before that line. You will
+need to refer to the information above to achieve that. Save the
+file and exit.</p>
+<p>Submit the script to the SLURM job manager with <code class="docutils literal notranslate"><span class="pre">sbatch</span>
+<span class="pre">script.sh</span></code>. It will reply something like <code class="docutils literal notranslate"><span class="pre">Submitted</span> <span class="pre">batch</span> <span class="pre">job</span>
+<span class="pre">4565494</span></code> when it succeeded. The job manager will write terminal
+output to a file named like <code class="docutils literal notranslate"><span class="pre">slurm-4565494.out</span></code>. It may take a
+few minutes to start and a few more minutes to run.</p>
+<p>While it is running, you can use <code class="docutils literal notranslate"><span class="pre">tail</span> <span class="pre">-f</span> <span class="pre">slurm*out</span></code> to watch the
+output. When it says “Done” then the runs are finished. Use Ctrl-C
+to exit the <code class="docutils literal notranslate"><span class="pre">tail</span></code> command that you ran.</p>
+<p>Once the first trajectory completes, exit <code class="docutils literal notranslate"><span class="pre">tail</span></code> and use <code class="docutils literal notranslate"><span class="pre">less</span>
+<span class="pre">default.log</span></code> to inspect the output. Find the “Mapping of GPU
+IDs…” Does what you read there agree with what you just learned?</p>
+<p>Then, find where the PME tuning took place. Hint: search for “pme
+grid”. What minimum value do you expect based on the van der Waals
+cutoff? What does the tuned value that tell you about the
+performance of the tasks on the GPU on this machine?</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">*.log</span></code> files contain the performance (in ns/day) of each run
+on the last line. Use <code class="docutils literal notranslate"><span class="pre">tail</span> <span class="pre">*log</span></code> to see the last chunk of each
+log file. Have a look through the log files and see what you can
+learn. What differs from log files from previous exercises?</p>
+</div>
+<div class="admonition-solution solution important dropdown admonition" id="solution-2">
+<p class="admonition-title">Solution</p>
+<p>You can download a <a class="reference download internal" download="" href="../_downloads/9961a0025030b86447c9cd23a0483239/script.sh"><code class="xref download docutils literal notranslate"><span class="pre">working</span> <span class="pre">version</span></code></a> of the batch
+submission script. Its diff from the original is file</p>
+<div class="highlight-udiff notranslate"><div class="highlight"><pre><span></span><span class="gd">--- /home/runner/work/gromacs-gpu-performance/gromacs-gpu-performance/content/exercises/using-pme/script.sh</span>
+<span class="gi">+++ /home/runner/work/gromacs-gpu-performance/gromacs-gpu-performance/content/answers/using-pme/script.sh</span>
+<span class="gu">@@ -19,13 +19,13 @@</span>
+<span class="w"> </span>srun gmx mdrun $options -g default.log
+<span class="w"> </span># Run mdrun assigning only the non-bonded interactions to the
+<span class="w"> </span># GPU and PME to the CPU
+<span class="gd">-srun gmx mdrun $options -g manual-nb.log          **FIXME**</span>
+<span class="gi">+srun gmx mdrun $options -g manual-nb.log           -nb gpu -pme cpu</span>
+<span class="w"> </span># Run mdrun assigning the non-bonded interactions and all of
+<span class="w"> </span># the PME task to the GPU
+<span class="gd">-srun gmx mdrun $options -g manual-nb-pmeall.log   **FIXME**</span>
+<span class="gi">+srun gmx mdrun $options -g manual-nb-pmeall.log    -nb gpu -pme gpu</span>
+<span class="w"> </span># Run mdrun assigning the non-bonded interactions and just
+<span class="w"> </span># the first part of the PME task to the GPU
+<span class="gd">-srun gmx mdrun $options -g manual-nb-pmefirst.log **FIXME**</span>
+<span class="gi">+srun gmx mdrun $options -g manual-nb-pmefirst.log  -nb gpu -pme gpu -pmefft cpu</span>
+<span class="w"> </span>
+<span class="w"> </span># Let us know we&#39;re done
+<span class="w"> </span>echo Done
+</pre></div>
+</div>
+<p>Sample output it produced is available:</p>
+<ul class="simple">
+<li><p><a class="reference download internal" download="" href="../_downloads/ddf471bc82f65018d2025d337cb87f38/default.log"><code class="xref download docutils literal notranslate"><span class="pre">default.log</span></code></a></p></li>
+<li><p><a class="reference download internal" download="" href="../_downloads/f672c68f2a4787a6851a82aee554d28e/manual-nb.log"><code class="xref download docutils literal notranslate"><span class="pre">manual-nb.log</span></code></a></p></li>
+<li><p><a class="reference download internal" download="" href="../_downloads/ea620b19cd028ccc94ecb0084e429732/manual-nb-pmeall.log"><code class="xref download docutils literal notranslate"><span class="pre">manual-nb-pmeall.log</span></code></a></p></li>
+<li><p><a class="reference download internal" download="" href="../_downloads/ca066c243a40136ff672a18d4835e80b/manual-nb-pmefirst.log"><code class="xref download docutils literal notranslate"><span class="pre">manual-nb-pmefirst.log</span></code></a></p></li>
+</ul>
+<p>The tails of those log files are</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>==&gt; default.log &lt;==
+-----------------------------------------------------------------------------
+ Total                                         19.079        913.607 100.0
+-----------------------------------------------------------------------------
+
+               Core t (s)   Wall t (s)        (%)
+       Time:      381.558       19.079     1999.9
+                 (ns/day)    (hour/ns)
+Performance:       90.582        0.265
+Finished mdrun on rank 0 Thu Sep  9 10:25:42 2021
+
+
+==&gt; manual-nb.log &lt;==
+ PME 3D-FFT             1   20      20002       4.644        222.376  11.8
+ PME solve Elec         1   20      10001       0.546         26.143   1.4
+-----------------------------------------------------------------------------
+
+               Core t (s)   Wall t (s)        (%)
+       Time:      790.275       39.514     2000.0
+                 (ns/day)    (hour/ns)
+Performance:       43.735        0.549
+Finished mdrun on rank 0 Thu Sep  9 10:27:23 2021
+
+
+==&gt; manual-nb-pmeall.log &lt;==
+-----------------------------------------------------------------------------
+ Total                                         18.967        908.261 100.0
+-----------------------------------------------------------------------------
+
+               Core t (s)   Wall t (s)        (%)
+       Time:      379.323       18.967     1999.9
+                 (ns/day)    (hour/ns)
+Performance:       91.115        0.263
+Finished mdrun on rank 0 Thu Sep  9 10:28:18 2021
+
+
+==&gt; manual-nb-pmefirst.log &lt;==
+-----------------------------------------------------------------------------
+ Total                                         25.932       1241.797 100.0
+-----------------------------------------------------------------------------
+
+               Core t (s)   Wall t (s)        (%)
+       Time:      518.627       25.932     1999.9
+                 (ns/day)    (hour/ns)
+Performance:       66.642        0.360
+Finished mdrun on rank 0 Thu Sep  9 10:29:29 2021
+</pre></div>
+</div>
+<p>Depending on the underlying variability of the performance of this
+trajectory on this hardware, we might be able to observe which
+configuration corresponds to the default, and whether offloading
+all or part of the PME work is advantageous, or not. Run the
+scripts a few time to get a crude impression of that variability!</p>
+</div>
+</section>
+<section id="running-update-and-constraints-on-the-gpu">
+<h2>Running update and constraints on the GPU<a class="headerlink" href="#running-update-and-constraints-on-the-gpu" title="Permalink to this heading"></a></h2>
+<p>Recall that earlier we said that the dominant operations are
+arithmetic and data movement. We can eliminate a lot of the data
+movement by moving most computation to the GPU, and also the
+reduction, update and constraints phases.</p>
+<figure class="align-center" id="id5">
+<img alt="../_images/molecular-dynamics-workflow-all-on-gpu.svg" src="../_images/molecular-dynamics-workflow-all-on-gpu.svg" /><figcaption>
+<p><span class="caption-text">Moving also the update and constraints to the GPU. Now there is
+much less data movement and the whole calculation is much more
+efficient. Generally the bonded forces should remain on the CPU,
+which is otherwise idle. Run this way using <code class="docutils literal notranslate"><span class="pre">gmx</span> <span class="pre">mdrun</span> <span class="pre">-nb</span>
+<span class="pre">gpu</span> <span class="pre">-pme</span> <span class="pre">gpu</span> <span class="pre">-update</span> <span class="pre">gpu</span></code></span><a class="headerlink" href="#id5" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>Note that not all combinations of algorithms are supported, but where
+they are supported, the benefit of running the update also on the GPU
+is very useful.</p>
+<div class="admonition-explore-gpu-updates exercise important admonition" id="exercise-3">
+<p class="admonition-title">Explore GPU updates</p>
+<p>Using the same folder and <code class="docutils literal notranslate"><span class="pre">topol.tpr</span></code> file from the above exercise,
+<a class="reference download internal" download="" href="../_downloads/e023bc8d4e5eb601f9909ab65328be64/all-on-gpu.sh"><code class="xref download docutils literal notranslate"><span class="pre">download</span> <span class="pre">the</span> <span class="pre">job</span> <span class="pre">submission</span> <span class="pre">script</span></code></a> where you will again see
+<strong>FIXME</strong> comments. Replace them to make it run NB, PME and the
+update on the GPU, as well as perhaps the bonded work. Save and
+exit.</p>
+<p>Run the script and observe the performance as before. Is that better
+or worse than earlier?</p>
+</div>
+<div class="admonition-solution solution important dropdown admonition" id="solution-3">
+<p class="admonition-title">Solution</p>
+<p>You can download a <a class="reference download internal" download="" href="../_downloads/2ac949c9c5d4a14a72e86d2770d3a64f/all-on-gpu.sh"><code class="xref download docutils literal notranslate"><span class="pre">working</span> <span class="pre">version</span></code></a> of the batch
+submission script. Its diff from the original is file</p>
+<div class="highlight-udiff notranslate"><div class="highlight"><pre><span></span><span class="gd">--- /home/runner/work/gromacs-gpu-performance/gromacs-gpu-performance/content/exercises/using-pme/all-on-gpu.sh</span>
+<span class="gi">+++ /home/runner/work/gromacs-gpu-performance/gromacs-gpu-performance/content/answers/using-pme/all-on-gpu.sh</span>
+<span class="gu">@@ -16,10 +16,10 @@</span>
+<span class="w"> </span>options=&quot;-nsteps 20000 -resetstep 19000 -ntomp $SLURM_CPUS_PER_TASK -pin on -pinstride 1&quot;
+<span class="w"> </span>
+<span class="w"> </span># Run mdrun assigning the non-bonded, PME, and update work to the GPU
+<span class="gd">-srun gmx mdrun $options -g manual-nb-pme-update.log        **FIXME**</span>
+<span class="gi">+srun gmx mdrun $options -g manual-nb-pme-update.log        -nb gpu -pme gpu             -update gpu</span>
+<span class="w"> </span># Run mdrun assigning the non-bonded, PME, bonded, and update
+<span class="w"> </span># work to the GPU
+<span class="gd">-srun gmx mdrun $options -g manual-nb-pme-bonded-update.log **FIXME**</span>
+<span class="gi">+srun gmx mdrun $options -g manual-nb-pme-bonded-update.log -nb gpu -pme gpu -bonded gpu -update gpu</span>
+<span class="w"> </span>
+<span class="w"> </span># Let us know we&#39;re done
+<span class="w"> </span>echo Done
+</pre></div>
+</div>
+<p>Sample output it produced is available:</p>
+<ul class="simple">
+<li><p><a class="reference download internal" download="" href="../_downloads/b31895e3569517eb4aad68d8bcd26e36/manual-nb-pme-update.log"><code class="xref download docutils literal notranslate"><span class="pre">manual-nb-pme-update.log</span></code></a></p></li>
+<li><p><a class="reference download internal" download="" href="../_downloads/361b374363403d37316c7c8c6fc174cb/manual-nb-pme-bonded-update.log"><code class="xref download docutils literal notranslate"><span class="pre">manual-nb-pme-bonded-update.log</span></code></a></p></li>
+</ul>
+<p>The tails of those log files are</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>==&gt; manual-nb-pme-bonded-update.log &lt;==
+-----------------------------------------------------------------------------
+ Total                                         13.602        651.337 100.0
+-----------------------------------------------------------------------------
+
+               Core t (s)   Wall t (s)        (%)
+       Time:      271.997       13.602     1999.7
+                 (ns/day)    (hour/ns)
+Performance:      127.056        0.189
+Finished mdrun on rank 0 Thu Sep  9 10:45:31 2021
+
+
+==&gt; manual-nb-pme-update.log &lt;==
+-----------------------------------------------------------------------------
+ Total                                         12.897        617.605 100.0
+-----------------------------------------------------------------------------
+
+               Core t (s)   Wall t (s)        (%)
+       Time:      257.917       12.897     1999.8
+                 (ns/day)    (hour/ns)
+Performance:      133.995        0.179
+Finished mdrun on rank 0 Thu Sep  9 10:44:53 2021
+</pre></div>
+</div>
+<p>Depending on the underlying variability of the performance of this
+trajectory on this hardware, we might be able to observe whether
+running also the update on the GPU is advantageous, or not. You
+should observe that it is a clear improvement on any hardware. Run the
+scripts a few time to get a crude impression of that variability!</p>
+</div>
+<div class="admonition-keypoints keypoints admonition" id="keypoints-0">
+<p class="admonition-title">Keypoints</p>
+<ul class="simple">
+<li><p>The PME workload can be run on a GPU in a few different ways</p></li>
+<li><p>The relative strength of CPU and GPU and the simulation system
+determines the most efficient way to assign the tasks. The
+default is not always best.</p></li>
+<li><p>When supported, moving the whole MD workload to the GPU provides
+good improvements.</p></li>
+</ul>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../md-algorithm/" class="btn btn-neutral float-left" title="Getting performance from the MD algorithm" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../multi-gpu/" class="btn btn-neutral float-right" title="Using multiple GPUs" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2020, EuroCC National Competence Centre Sweden.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
